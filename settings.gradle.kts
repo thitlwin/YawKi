@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "YawKi"
 include(":app")
- 
+include(":app:yawki_library")
