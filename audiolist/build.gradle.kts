@@ -1,16 +1,14 @@
-//apply(from = "${rootProject.projectDir}/yawki_library.gradle.kts")
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = "com.thit.yawki"
+    namespace = "com.thit.audiolist"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.thit.yawki"
+        applicationId = "com.thit.audiolist"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

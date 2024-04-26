@@ -1,4 +1,4 @@
-package com.thit.yawki
+package com.thit.audiolist
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,9 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.thit.yawki.ui.theme.YawKiTheme
+import com.thit.audiolist.ui.theme.YawKiTheme
 
-class MainActivity : ComponentActivity() {
+class AudioListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
