@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">YawKi</string>
     <string name="title_feature1">Feature</string>
+    <string name="title_feature2">Feature2</string>
 </resources>

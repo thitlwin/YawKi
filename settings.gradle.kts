@@ -17,4 +17,4 @@ rootProject.name = "YawKi"
 include(":app")
 include(":common")
 include(":audiolist")
-include(":feature1")
+include(":features")
