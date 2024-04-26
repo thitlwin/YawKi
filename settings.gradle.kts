@@ -16,5 +16,5 @@ dependencyResolutionManagement {
 rootProject.name = "YawKi"
 include(":app")
 include(":common")
-include(":audiolist")
-include(":features")
+include(":features:player")
+include(":features:audiolist")

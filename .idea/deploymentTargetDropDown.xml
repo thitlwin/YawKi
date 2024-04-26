@@ -8,6 +8,15 @@
       <entry key="audiolist">
         <State />
       </entry>
+      <entry key="features">
+        <State />
+      </entry>
+      <entry key="features.audiolist">
+        <State />
+      </entry>
+      <entry key="features.player">
+        <State />
+      </entry>
     </value>
   </component>
 </project>
