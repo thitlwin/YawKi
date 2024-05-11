@@ -1,20 +1,20 @@
 //apply(from = "${rootProject.projectDir}/yawki_library.gradle.kts")
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id(BuildPlugins.ANDROID_APPLICATION_PLUGIN)
+    id(BuildPlugins.KOTLIN_ANDROID_PLUGIN)
 }
 
 android {
     namespace = "com.thit.yawki"
-    compileSdk = 34
+    compileSdk = ProjectProperties.COMPILE_SDK
 
     defaultConfig {
-        applicationId = "com.thit.yawki"
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = ProjectProperties.APPLICATION_ID
+        minSdk = ProjectProperties.MIN_SDK
+        targetSdk = ProjectProperties.TARGET_SDK
+        versionCode = ProjectProperties.VERSION_CODE
+        versionName = ProjectProperties.VERSION_NAME
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
