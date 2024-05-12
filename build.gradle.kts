@@ -4,6 +4,5 @@ plugins {
     id(BuildPlugins.KOTLIN_ANDROID_PLUGIN) version "1.9.0" apply false
     id(BuildPlugins.ANDROID_LIBRARY_PLUGIN) version "8.2.2" apply false
     id(BuildPlugins.KOTLIN_JVM) version "1.9.0" apply false
-//    id("com.android.library") version "8.2.2" apply false
-//    id("org.jetbrains.kotlin.android") version "1.9.22" apply false
+    id(BuildPlugins.DAGGER_HILT_PLUGIN) version Lib.Di.HILT_VERSION apply false
 }

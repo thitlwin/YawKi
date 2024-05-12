@@ -3,6 +3,8 @@
 plugins {
     id(BuildPlugins.ANDROID_APPLICATION_PLUGIN)
     id(BuildPlugins.KOTLIN_ANDROID_PLUGIN)
+    id(BuildPlugins.KOTLIN_KAPT)
+    id(BuildPlugins.DAGGER_HILT_PLUGIN)
 }
 
 android {
@@ -50,9 +52,16 @@ android {
         }
     }
 }
-
+kapt {
+    correctErrorTypes = true
+}
 dependencies {
     implementation(project(":navigator"))
+
+    implementation(Lib.Di.hiltAndroid)
+    kapt(Lib.Di.hiltAndroidCompiler)
+
+    implementation(Lib.Kotlin.KT_STD)
 
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

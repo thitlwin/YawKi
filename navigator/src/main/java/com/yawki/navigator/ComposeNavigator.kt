@@ -9,8 +9,9 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
-abstract class YawKiComposeNavigator : ComposeNavigator() {
+class YawKiComposeNavigator @Inject constructor() : ComposeNavigator() {
     override fun navigate(route: String, optionsBuilder: (NavOptionsBuilder.() -> Unit)?) {
         val options = optionsBuilder?.let { navOptions(it) }
         navigationCommands.tryEmit(ComposeNavigationCommand.NavigateToRoute(route, options))

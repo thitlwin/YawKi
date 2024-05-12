@@ -12,7 +12,13 @@ object Lib {
 
         const val KTX_CORE = "androidx.core:core-ktx:${KTX_CORE_VERSION}"
         const val KT_STD = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${KOTLIN_VERSION}"
+    }
 
+    object Di {
+        const val HILT_VERSION = "2.46"
+        const val hiltAndroid = "com.google.dagger:hilt-android:${HILT_VERSION}"
+        const val hiltAndroidCompiler = "com.google.dagger:hilt-android-compiler:${HILT_VERSION}"
+        const val hiltNavigationCompose = "androidx.hilt:hilt-navigation-compose:1.2.0"
     }
 }
 
@@ -22,4 +28,5 @@ object BuildPlugins {
     const val KOTLIN_ANDROID_PLUGIN = "org.jetbrains.kotlin.android"
     const val KOTLIN_KAPT = "kotlin-kapt"
     const val KOTLIN_JVM="org.jetbrains.kotlin.jvm"
+    const val DAGGER_HILT_PLUGIN = "com.google.dagger.hilt.android"
 }

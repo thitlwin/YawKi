@@ -42,6 +42,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation(Lib.Android.COMPOSE_NAVIGATION)
+    implementation(Lib.Di.hiltNavigationCompose)
 //    implementation(Lib.Kotlin.KTX_CORE)
 //    implementation(Lib.Kotlin.KT_STD)
 }
