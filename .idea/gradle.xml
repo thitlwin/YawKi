@@ -27,6 +27,7 @@
             <option value="$PROJECT_DIR$/features/audiolist" />
             <option value="$PROJECT_DIR$/features/home" />
             <option value="$PROJECT_DIR$/features/player" />
+            <option value="$PROJECT_DIR$/navigator" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

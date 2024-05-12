@@ -1,0 +1,45 @@
+package com.yawki.navigator
+
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
+sealed class YawKiScreens(
+    val route: String,
+    val navArguments: List<NamedNavArgument> = emptyList()
+) {
+    val name: String = route.appendArguments(navArguments)
+
+    // onboarding
+    object GettingStarted : YawKiScreens("gettingStarted")
+
+    // dashboard
+    object Dashboard : YawKiScreens(
+        "dashboard",
+        navArguments = listOf(navArgument("channelid") { type = NavType.StringType })
+    ) {
+        fun createRoute(channelId: String) =
+            route.replace("{${navArguments.first().name}}", channelId)
+    }
+}
+
+sealed class YawKiRoute(val name: String) {
+    object OnBoarding: YawKiRoute("onboarding")
+    object Dashboard: YawKiRoute("dashboard")
+}
+
+private fun String.appendArguments(navArguments: List<NamedNavArgument>): String {
+    val mandatoryArguments = navArguments.filter {
+        it.argument.defaultValue == null
+    }.takeIf { it.isNotEmpty() }
+        ?.joinToString(separator = "/", prefix = "/") { "{${it.name}}" }
+        .orEmpty()
+    val optionalArguments = navArguments.filter {
+        it.argument.defaultValue != null
+    }
+        .takeIf { it.isNotEmpty() }
+        ?.joinToString(separator = "&", prefix = "?") {
+            "${it.name}={${it.name}}"
+        }.orEmpty()
+    return "$this$mandatoryArguments$optionalArguments"
+}
