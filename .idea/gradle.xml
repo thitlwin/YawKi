@@ -28,6 +28,7 @@
             <option value="$PROJECT_DIR$/features/home" />
             <option value="$PROJECT_DIR$/features/player" />
             <option value="$PROJECT_DIR$/navigator" />
+            <option value="$PROJECT_DIR$/ui-dashboard" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

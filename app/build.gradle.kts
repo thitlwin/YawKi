@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":navigator"))
 
     implementation(Lib.Di.hiltAndroid)
+    implementation(Lib.Android.COMPOSE_NAVIGATION)
     kapt(Lib.Di.hiltAndroidCompiler)
 
     implementation(Lib.Kotlin.KT_STD)
