@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.thit.common"
+    namespace = "com.yawki.common"
     compileSdk = 34
 
     defaultConfig {

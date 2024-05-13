@@ -44,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = Lib.Android.COMPOSE_VERSION
     }
     packaging {
         resources {
@@ -56,10 +56,12 @@ kapt {
     correctErrorTypes = true
 }
 dependencies {
+    api(project(":ui-dashboard"))
+
     implementation(project(":navigator"))
 
     implementation(Lib.Di.hiltAndroid)
-    implementation(Lib.Android.COMPOSE_NAVIGATION)
+    kapt(Lib.Di.hiltCompiler)
     kapt(Lib.Di.hiltAndroidCompiler)
 
     implementation(Lib.Kotlin.KT_STD)
@@ -67,11 +69,14 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.9.0")
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+
+    implementation(Lib.Android.COMPOSE_NAVIGATION)
+    implementation(platform(Lib.Android.COMPOSE_BOM))
+    implementation(Lib.Android.COMPOSE_UI)
+    implementation(Lib.Android.COMPOSE_UI_GRAPHICS)
+    implementation(Lib.Android.COMPOSE_UI_TOOLING_PREVIEW)
+    implementation(Lib.Android.COMPOSE_MATERIAL3)
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

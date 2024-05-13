@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.thit.yawki.player"
+    namespace = "com.yawki.player"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.thit.yawki.player"
+        applicationId = "com.yawki.player"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

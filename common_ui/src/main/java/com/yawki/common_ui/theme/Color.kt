@@ -1,4 +1,4 @@
-package com.yawki.ui.theme
+package com.yawki.common_ui.theme
 
 import androidx.compose.ui.graphics.Color
 
