@@ -6,10 +6,10 @@ plugins {
 
 android {
     namespace = "com.yawki.ui_dashboard"
-    compileSdk = 34
+    compileSdk = ProjectProperties.COMPILE_SDK
 
     defaultConfig {
-        minSdk = 24
+        minSdk = ProjectProperties.MIN_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":common"))
 
     implementation(project(":navigator"))
     implementation(project(":common_ui"))

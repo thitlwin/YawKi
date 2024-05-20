@@ -1,30 +1,27 @@
 package com.yawki.ui_dashboard.compose
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -35,7 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.yawki.common_ui.theme.YawKiTheme
-import com.yawki.common_ui.theme.YawkiTypography
+import com.yawki.common_ui.theme.YawKiTypography
 import com.yawki.navigator.ComposeNavigator
 import com.yawki.ui_dashboard.R
 import com.yawki.ui_dashboard.screens.HomeScreenUI
@@ -83,7 +80,7 @@ private fun DashboardScaffold(
     appBarIconClick: () -> Unit,
     composeNavigator: ComposeNavigator,
 ) {
-    Box(modifier) {
+    Surface(contentColor = MaterialTheme.colorScheme.background) {
         Scaffold(
 //            backgroundColor = SlackCloneColorProvider.colors.uiBackground,
 //            contentColor = SlackCloneColorProvider.colors.textSecondary,
@@ -120,20 +117,30 @@ private fun DashboardScaffold(
 
 @Composable
 fun DashboardBottomNavBar(navController: NavHostController) {
-    Column(Modifier.background(color = MaterialTheme.colors.background)) {
-        Divider(
-            color = MaterialTheme.colors.onPrimary.copy(alpha = 0.2f),
-            thickness = 0.5.dp
-        )
-        BottomNavigation(backgroundColor = MaterialTheme.colors.background) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            val dashTabs = getDashTabs()
-            dashTabs.forEach { screen ->
-                BottomNavItem(screen, currentDestination, navController)
-            }
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colorScheme.primary
+    ){
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
+        val dashTabs = getDashTabs()
+        dashTabs.forEachIndexed { index, screen ->
+            BottomNavItem(screen, currentDestination, navController)
         }
     }
+//    Column{//(Modifier.background(color = YawKiColorSchemeProvider.colors.primary)) {
+//        Divider(
+//            color = MaterialTheme.colors.onPrimary.copy(alpha = 0.2f),
+//            thickness = 0.5.dp
+//        )
+//        BottomNavigation {
+//            val navBackStackEntry by navController.currentBackStackEntryAsState()
+//            val currentDestination = navBackStackEntry?.destination
+//            val dashTabs = getDashTabs()
+//            dashTabs.forEach { screen ->
+//                BottomNavItem(screen, currentDestination, navController)
+//            }
+//        }
+//    }
 }
 
 @Composable
@@ -143,14 +150,14 @@ fun RowScope.BottomNavItem(
     navController: NavHostController
 ) {
     BottomNavigationItem(
-        selectedContentColor = MaterialTheme.colors.onPrimary,
-        unselectedContentColor = MaterialTheme.colors.onSecondary,
+        selectedContentColor = MaterialTheme.colorScheme.onPrimary,
+//        unselectedContentColor = MaterialTheme.colorScheme.onSecondary,
         icon = { Icon(screen.image, contentDescription = null) },
         label = {
             Text(
                 stringResource(screen.resourceId),
                 maxLines = 1,
-                style = YawkiTypography.headlineMedium
+                style = YawKiTypography.bodySmall
             )
         },
         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,

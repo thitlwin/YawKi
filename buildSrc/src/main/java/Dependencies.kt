@@ -2,7 +2,7 @@ object Lib {
     object Android {
         private const val COMPOSE_NAVIGATION_VERSION = "2.7.7"
         const val COMPOSE_VERSION="1.5.2"
-
+        private const val COMPOSE_UI_FONT_VERSION="1.6.7"
         const val COMPOSE_NAVIGATION =
             "androidx.navigation:navigation-compose:${COMPOSE_NAVIGATION_VERSION}"
 
@@ -12,6 +12,7 @@ object Lib {
         const val COMPOSE_UI_TOOLING_PREVIEW = "androidx.compose.ui:ui-tooling-preview"
         const val COMPOSE_MATERIAL3 = "androidx.compose.material3:material3"
         const val COMPOSE_MATERIAL2 = "androidx.compose.material:material"
+        const val COMPOSE_UI_FONT = "androidx.compose.ui:ui-text-google-fonts:${COMPOSE_UI_FONT_VERSION}"
 
     }
 
