@@ -11,21 +11,24 @@ sealed class YawKiScreens(
     val name: String = route.appendArguments(navArguments)
 
     // onboarding
-    object GettingStarted : YawKiScreens("gettingStarted")
+    data object GettingStarted : YawKiScreens("GettingStarted")
 
     // dashboard
-    object Dashboard : YawKiScreens(
-        "dashboard",
+    data object Dashboard : YawKiScreens(
+        "Dashboard",
         navArguments = listOf(navArgument("channelid") { type = NavType.StringType })
     ) {
         fun createRoute(channelId: String) =
             route.replace("{${navArguments.first().name}}", channelId)
     }
+
+    data object AudioListUIScreen : YawKiScreens("AudioListUIScreen")
+    data object PlayerUIScreen : YawKiScreens("PlayerUIScreen")
 }
 
 sealed class YawKiRoute(val name: String) {
-    object OnBoarding: YawKiRoute("onboarding")
-    object Dashboard: YawKiRoute("dashboard")
+    data object OnBoarding: YawKiRoute("onboarding")
+    data object Dashboard: YawKiRoute("dashboard")
 }
 
 private fun String.appendArguments(navArguments: List<NamedNavArgument>): String {

@@ -14,7 +14,9 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -22,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -31,44 +32,44 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.yawki.common.presentation.SharedViewModel
 import com.yawki.common_ui.theme.YawKiTheme
 import com.yawki.common_ui.theme.YawKiTypography
 import com.yawki.navigator.ComposeNavigator
 import com.yawki.ui_dashboard.R
-import com.yawki.ui_dashboard.screens.HomeScreenUI
-import com.yawki.ui_dashboard.screens.PlaylistScreenUI
-import com.yawki.ui_dashboard.screens.SettingScreenUI
+import com.yawki.ui_dashboard.screens.home.HomeScreenUI
+import com.yawki.ui_dashboard.screens.favorite.PlaylistScreenUI
+import com.yawki.ui_dashboard.screens.setting.SettingScreenUI
 
 @Composable
 fun DashboardUI(
     composeNavigator: ComposeNavigator,
-    dashboardVM: DashboardVM = hiltViewModel()
+    sharedViewModel: SharedViewModel,
 ) {
     val scaffoldState = rememberScaffoldState()
     val dashboardNavController = rememberNavController()
     YawKiTheme {
-        DashboardScreenRegular(
+        DashboardScreen(
             scaffoldState,
             dashboardNavController,
             composeNavigator,
-            dashboardVM
+            sharedViewModel
         )
     }
 }
 
 @Composable
-fun DashboardScreenRegular(
+fun DashboardScreen(
     scaffoldState: ScaffoldState,
     dashboardNavController: NavHostController,
     composeNavigator: ComposeNavigator,
-    dashboardVM: DashboardVM
+    sharedViewModel: SharedViewModel,
 ) {
     DashboardScaffold(
         scaffoldState = scaffoldState,
         dashboardNavController = dashboardNavController,
-        modifier = Modifier,
-        appBarIconClick = { },
-        composeNavigator = composeNavigator
+        composeNavigator = composeNavigator,
+        sharedViewModel = sharedViewModel
     )
 }
 
@@ -76,14 +77,11 @@ fun DashboardScreenRegular(
 private fun DashboardScaffold(
     scaffoldState: ScaffoldState,
     dashboardNavController: NavHostController,
-    modifier: Modifier,
-    appBarIconClick: () -> Unit,
     composeNavigator: ComposeNavigator,
+    sharedViewModel: SharedViewModel,
 ) {
     Surface(contentColor = MaterialTheme.colorScheme.background) {
         Scaffold(
-//            backgroundColor = SlackCloneColorProvider.colors.uiBackground,
-//            contentColor = SlackCloneColorProvider.colors.textSecondary,
             modifier = Modifier
                 .statusBarsPadding()
                 .navigationBarsPadding(),
@@ -98,15 +96,15 @@ private fun DashboardScaffold(
             Box(modifier = Modifier.padding(innerPadding)) {
                 NavHost(
                     dashboardNavController,
-                    startDestination = Screen.Home.route,
+                    startDestination = DashboardScreens.Home.route,
                 ) {
-                    composable(Screen.Home.route) {
-                        HomeScreenUI()
+                    composable(DashboardScreens.Home.route) {
+                        HomeScreenUI(sharedViewModel)
                     }
-                    composable(Screen.Setting.route) {
+                    composable(DashboardScreens.Setting.route) {
                         SettingScreenUI()
                     }
-                    composable(Screen.Playlist.route) {
+                    composable(DashboardScreens.Favorites.route) {
                         PlaylistScreenUI()
                     }
                 }
@@ -119,7 +117,7 @@ private fun DashboardScaffold(
 fun DashboardBottomNavBar(navController: NavHostController) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colorScheme.primary
-    ){
+    ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
         val dashTabs = getDashTabs()
@@ -127,48 +125,34 @@ fun DashboardBottomNavBar(navController: NavHostController) {
             BottomNavItem(screen, currentDestination, navController)
         }
     }
-//    Column{//(Modifier.background(color = YawKiColorSchemeProvider.colors.primary)) {
-//        Divider(
-//            color = MaterialTheme.colors.onPrimary.copy(alpha = 0.2f),
-//            thickness = 0.5.dp
-//        )
-//        BottomNavigation {
-//            val navBackStackEntry by navController.currentBackStackEntryAsState()
-//            val currentDestination = navBackStackEntry?.destination
-//            val dashTabs = getDashTabs()
-//            dashTabs.forEach { screen ->
-//                BottomNavItem(screen, currentDestination, navController)
-//            }
-//        }
-//    }
 }
 
 @Composable
 fun RowScope.BottomNavItem(
-    screen: Screen,
+    dashboardScreens: DashboardScreens,
     currentDestination: NavDestination?,
     navController: NavHostController
 ) {
     BottomNavigationItem(
         selectedContentColor = MaterialTheme.colorScheme.onPrimary,
 //        unselectedContentColor = MaterialTheme.colorScheme.onSecondary,
-        icon = { Icon(screen.image, contentDescription = null) },
+        icon = { Icon(dashboardScreens.image, contentDescription = null) },
         label = {
             Text(
-                stringResource(screen.resourceId),
+                stringResource(dashboardScreens.resourceId),
                 maxLines = 1,
                 style = YawKiTypography.bodySmall
             )
         },
-        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+        selected = currentDestination?.hierarchy?.any { it.route == dashboardScreens.route } == true,
         onClick = {
-            navigateTab(navController, screen)
+            navigateTab(navController, dashboardScreens)
         }
     )
 }
 
-fun navigateTab(navController: NavHostController, screen: Screen) {
-    navController.navigate(screen.route) {
+fun navigateTab(navController: NavHostController, dashboardScreens: DashboardScreens) {
+    navController.navigate(dashboardScreens.route) {
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destinations
         // on the back stack as users select items
@@ -183,19 +167,19 @@ fun navigateTab(navController: NavHostController, screen: Screen) {
     }
 }
 
-sealed class Screen(
+sealed class DashboardScreens(
     val route: String,
     val image: ImageVector,
     @StringRes val resourceId: Int
 ) {
-    object Home : Screen("Home", Icons.Filled.Home, R.string.home)
-    object Playlist : Screen("Playlist", Icons.Filled.Home, R.string.playlist)
-    object Setting : Screen("Setting", Icons.Filled.Home, R.string.setting)
+    data object Home : DashboardScreens("Home", Icons.Filled.Home, R.string.home)
+    data object Favorites : DashboardScreens("Favorite", Icons.Filled.Favorite, R.string.favorite)
+    data object Setting : DashboardScreens("Setting", Icons.Filled.Settings, R.string.setting)
 }
 
-fun getDashTabs(): MutableList<Screen> {
+fun getDashTabs(): MutableList<DashboardScreens> {
     return mutableListOf(
-        Screen.Home, Screen.Playlist,
-        Screen.Setting
+        DashboardScreens.Home, DashboardScreens.Favorites,
+        DashboardScreens.Setting
     )
 }

@@ -1,8 +1,10 @@
 object Lib {
     object Android {
         private const val COMPOSE_NAVIGATION_VERSION = "2.7.7"
-        const val COMPOSE_VERSION="1.5.2"
-        private const val COMPOSE_UI_FONT_VERSION="1.6.7"
+        const val COMPOSE_VERSION = "1.5.2"
+        private const val COMPOSE_UI_FONT_VERSION = "1.6.7"
+        private const val COMPOSE_COIL_VERSION = "2.6.0"
+
         const val COMPOSE_NAVIGATION =
             "androidx.navigation:navigation-compose:${COMPOSE_NAVIGATION_VERSION}"
 
@@ -10,10 +12,26 @@ object Lib {
         const val COMPOSE_UI = "androidx.compose.ui:ui"
         const val COMPOSE_UI_GRAPHICS = "androidx.compose.ui:ui-graphics"
         const val COMPOSE_UI_TOOLING_PREVIEW = "androidx.compose.ui:ui-tooling-preview"
+        const val COMPOSE_UI_TOOLING = "androidx.compose.ui:ui-tooling"
         const val COMPOSE_MATERIAL3 = "androidx.compose.material3:material3"
         const val COMPOSE_MATERIAL2 = "androidx.compose.material:material"
-        const val COMPOSE_UI_FONT = "androidx.compose.ui:ui-text-google-fonts:${COMPOSE_UI_FONT_VERSION}"
+        const val COMPOSE_UI_FONT =
+            "androidx.compose.ui:ui-text-google-fonts:${COMPOSE_UI_FONT_VERSION}"
+        const val COMPOSE_COIL = "io.coil-kt:coil-compose:${COMPOSE_COIL_VERSION}"
 
+        const val GOOGLE_MATERIAL = "com.google.android.material:material:1.12.0"
+    }
+
+    object Media3 {
+        private const val MEDIA_VERSION = "1.3.1"
+        const val EXOPLAYER = "androidx.media3:media3-exoplayer:${MEDIA_VERSION}"
+        const val MEDIA3_SESSION = "androidx.media3:media3-session:${MEDIA_VERSION}"
+    }
+
+    object Firebase {
+        const val FIREBASE_BOM = "com.google.firebase:firebase-bom:33.0.0"
+        const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics"
+        const val CLOUD_FIRESTORE = "com.google.firebase:firebase-firestore"
     }
 
     object Kotlin {
@@ -42,4 +60,5 @@ object BuildPlugins {
     const val KOTLIN_KAPT = "kotlin-kapt"
     const val KOTLIN_JVM = "org.jetbrains.kotlin.jvm"
     const val DAGGER_HILT_PLUGIN = "com.google.dagger.hilt.android"
+    const val GOOGLE_SERVICE = "com.google.gms.google-services"
 }

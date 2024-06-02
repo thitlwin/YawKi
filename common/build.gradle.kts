@@ -1,16 +1,16 @@
-//apply(from = "${rootProject.projectDir}/yawki_library.gradle.kts")
-
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id(BuildPlugins.ANDROID_LIBRARY_PLUGIN)
+    id(BuildPlugins.KOTLIN_ANDROID_PLUGIN)
+    id(BuildPlugins.KOTLIN_KAPT)
+    id(BuildPlugins.DAGGER_HILT_PLUGIN)
 }
 
 android {
     namespace = "com.yawki.common"
-    compileSdk = 34
+    compileSdk = ProjectProperties.COMPILE_SDK
 
     defaultConfig {
-        minSdk = 24
+        minSdk = ProjectProperties.MIN_SDK
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -36,10 +36,18 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.13.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+// Firebase
+    implementation(platform(Lib.Firebase.FIREBASE_BOM))
+    implementation(Lib.Firebase.CLOUD_FIRESTORE)
+
+// For DI
+    implementation(Lib.Di.hiltAndroid)
+    kapt(Lib.Di.hiltCompiler)
+    kapt(Lib.Di.hiltAndroidCompiler)
+
+//    FOR MEDIA
+    implementation(Lib.Media3.EXOPLAYER)
+    implementation(Lib.Media3.MEDIA3_SESSION)
+
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
 }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "340804117278",
+    "project_id": "yawki-a6d6e",
+    "storage_bucket": "yawki-a6d6e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340804117278:android:dc8324561e46a7828d9f0f",
+        "android_client_info": {
+          "package_name": "com.thit.yawki"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrIntPZdXa3wp0mtv2vhTdYaigB3la3KA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

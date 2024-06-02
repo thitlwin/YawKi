@@ -3,7 +3,7 @@ package com.yawki.navigator
 import androidx.navigation.NavOptions
 
 sealed class NavigationCommand {
-    object NavigateUp : NavigationCommand()
+    data object NavigateUp : NavigationCommand()
 }
 
 sealed class ComposeNavigationCommand : NavigationCommand() {

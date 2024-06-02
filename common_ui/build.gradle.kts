@@ -41,16 +41,17 @@ android {
 dependencies {
     /* Android Designing and layout */
     api(platform(Lib.Android.COMPOSE_BOM))
-    api(Lib.Android.COMPOSE_MATERIAL3)
     api(Lib.Android.COMPOSE_UI)
-    api(Lib.Android.COMPOSE_UI_TOOLING_PREVIEW)
+    api(Lib.Android.COMPOSE_COIL)
 
+    api(Lib.Android.COMPOSE_MATERIAL2)
+    api(Lib.Android.COMPOSE_MATERIAL3)
     implementation(Lib.Android.COMPOSE_UI_FONT)
 
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.12.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    implementation(project(":navigator"))
+//    api(Lib.Android.GOOGLE_MATERIAL)
+
+    debugImplementation(Lib.Android.COMPOSE_UI_TOOLING)
 }

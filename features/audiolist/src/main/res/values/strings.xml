@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AudioList</string>
+    <string name="empty_audio">Empty audio</string>
+    <string name="mp3">MP3 တရားတော်များ</string>
 </resources>

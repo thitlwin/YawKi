@@ -2,6 +2,15 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="AudioListItemPreview">
+        <State />
+      </entry>
+      <entry key="SubtitleTextPreview">
+        <State />
+      </entry>
+      <entry key="TitleText">
+        <State />
+      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>

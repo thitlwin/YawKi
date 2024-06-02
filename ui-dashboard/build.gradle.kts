@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id(BuildPlugins.ANDROID_LIBRARY_PLUGIN)
+    id(BuildPlugins.KOTLIN_ANDROID_PLUGIN)
     id(BuildPlugins.KOTLIN_KAPT)
 }
 
@@ -41,19 +41,21 @@ android {
 
 dependencies {
     implementation(project(":common"))
-
     implementation(project(":navigator"))
     implementation(project(":common_ui"))
+    implementation(project(":features:audiolist"))
+    implementation(project(":features:player"))
 
-    api(Lib.Di.hiltNavigationCompose)
-    api(Lib.Android.COMPOSE_UI)
-    api(Lib.Android.COMPOSE_MATERIAL2)
-    api(Lib.Android.COMPOSE_UI_TOOLING_PREVIEW)
+    implementation(Lib.Android.COMPOSE_UI)
+    implementation(Lib.Android.COMPOSE_MATERIAL2)
+    implementation(Lib.Android.COMPOSE_UI_TOOLING_PREVIEW)
+
 
     /*DI*/
 //    api(Lib.Di.hiltAndroid)
 //    api(Lib.Di.hiltNavigationCompose)
 //    kapt(Lib.Di.hiltCompiler)
+    implementation(Lib.Di.hiltNavigationCompose)
     kapt(Lib.Di.hiltAndroidCompiler)
 
 
