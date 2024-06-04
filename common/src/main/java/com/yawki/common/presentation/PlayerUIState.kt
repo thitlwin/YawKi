@@ -4,6 +4,8 @@ import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.song.Song
 
 data class PlayerUIState(
+    val loading: Boolean = false,
+    val error: Throwable? = null,
     val songs: List<Song>? = emptyList(),
     val playerState: PlayerState? = null,
     val currentSong: Song? = null,

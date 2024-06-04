@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.monk.Monk
+import com.yawki.common.domain.models.song.Song
 import com.yawki.common.domain.usecases.DestroyMediaControllerUseCase
 import com.yawki.common.domain.usecases.GetCurrentSongPositionUseCase
 import com.yawki.common.domain.usecases.SetMediaControllerCallbackUseCase
@@ -26,6 +27,9 @@ class SharedViewModel @Inject constructor(
 
     private val _selectedMonkFlow = MutableStateFlow<Monk?>(null)
     val selectedMonkFlow = _selectedMonkFlow.asStateFlow()
+
+    private val _selecteSongFlow = MutableStateFlow<Song?>(null)
+    val selecteSongFlow = _selecteSongFlow.asStateFlow()
 
     private val _selectedSongIndexFlow = MutableStateFlow<Int?>(null)
     val selectedSongIndexFlow = _selectedSongIndexFlow.asStateFlow()
@@ -79,4 +83,7 @@ class SharedViewModel @Inject constructor(
         _selectedMonkFlow.value = monk
     }
 
+    fun setSelectedSong(song: Song) {
+        _selecteSongFlow.value = song
+    }
 }

@@ -52,48 +52,65 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yawki.common.data.DataProvider
 import com.yawki.common.domain.models.PlayerState
+import com.yawki.common.domain.models.monk.Monk
 import com.yawki.common.domain.models.song.Song
+import com.yawki.common.presentation.PlayerUIState
 import com.yawki.common.presentation.SharedViewModel
 import com.yawki.common.utils.toTime
+import com.yawki.common_ui.components.ErrorView
+import com.yawki.common_ui.components.LoadingView
 import com.yawki.common_ui.components.Material3Card
-import com.yawki.common_ui.theme.YawKiTheme
-import com.yawki.navigator.ComposeNavigator
 
 @Composable
 fun PlayerUI(
-    composeNavigator: ComposeNavigator,
     sharedViewModel: SharedViewModel,
-    playerVM: PlayerVM = hiltViewModel()
 ) {
-    YawKiTheme {
-        PlayerScreen(
-            composeNavigator = composeNavigator,
-            sharedViewModel = sharedViewModel,
-            playerVM = playerVM
-        )
+    val playerVM: PlayerVM = hiltViewModel()
+    val state by playerVM.uiState.collectAsState()
+    val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
+    val selectedSongIndex = sharedViewModel.selectedSongIndexFlow.collectAsState().value ?: 0
+    val selectedSong = sharedViewModel.selecteSongFlow.collectAsState().value
+
+    LaunchedEffect(key1 = Unit) {
+        playerVM.onEvent(PlayerUIEvent.BindInitialState(sharedViewModel.musicControllerUiState.value))
+        playerVM.onEvent(PlayerUIEvent.PlaySong(selectedSongIndex))
+    }
+
+    when {
+        state.loading -> {
+            LoadingView()
+        }
+
+        state.error != null -> {
+            ErrorView(throwable = state.error!!)
+        }
+
+        state.currentSong != null -> {
+            PlayerScreen(
+                uiState = state,
+                monk = selectedMonk,
+                onEvent = playerVM::onEvent
+            )
+        }
     }
 }
 
 @Composable
 fun PlayerScreen(
-    composeNavigator: ComposeNavigator,
-    sharedViewModel: SharedViewModel,
-    playerVM: PlayerVM
+    uiState: PlayerUIState,
+    monk: Monk?,
+    onEvent: (PlayerUIEvent) -> Unit
 ) {
-    val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
-    val selectedSong = sharedViewModel.selectedSongIndexFlow.collectAsState().value ?: 0
-
-    LaunchedEffect(key1 = Unit) {
-        playerVM.onEvent(PlayerUIEvent.PlaySong(selectedSong))
-    }
-
     Scaffold(
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         contentColor = MaterialTheme.colorScheme.secondary,
         modifier = Modifier.statusBarsPadding(),
     ) { innerPadding ->
         Column(verticalArrangement = Arrangement.Top) {
-            PlayerTopAppBar(composeNavigator)
+            PlayerTopAppBar(
+                onDownload = onEvent,
+                onBackPress = onEvent
+            )
             // Image Card
             Material3Card(
                 modifier = Modifier
@@ -102,9 +119,10 @@ fun PlayerScreen(
                 backgroundColor = MaterialTheme.colorScheme.secondary,
                 shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
             ) {
-                val musicControllerUiState = sharedViewModel.musicControllerUiState.collectAsState().value
+//                val musicControllerUiState =
+//                    sharedViewModel.musicControllerUiState.collectAsState().value
                 val iconResId =
-                    if (musicControllerUiState.playerState == PlayerState.PLAYING) R.drawable.ic_pause else R.drawable.ic_play
+                    if (uiState.playerState == PlayerState.PLAYING) R.drawable.ic_pause else R.drawable.ic_play
 
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -116,16 +134,16 @@ fun PlayerScreen(
                 ) {
                     CenterImage()
                     PlayerFileName(
-                        currentSong = musicControllerUiState.currentSong,
-                        monkName = selectedMonk?.name ?: "",
+                        currentSong = uiState.currentSong,
+                        monkName = monk?.name ?: "",
                         onFavoriteIconClick = {}
                     )
                 }
                 SliderAndPlayerControl(
-                    currentTime = musicControllerUiState.currentPosition,
-                    totalTime = musicControllerUiState.totalDuration,
+                    currentTime = uiState.currentPosition,
+                    totalTime = uiState.totalDuration,
                     onSliderChange = { newPosition ->
-                        playerVM.onEvent(
+                        onEvent(
                             PlayerUIEvent.SeekSongToPosition(
                                 newPosition.toLong()
                             )
@@ -133,26 +151,26 @@ fun PlayerScreen(
                     },
                     playPauseIcon = iconResId,
                     playOrToggleSong = {
-                        playerVM.onEvent(
-                            if (musicControllerUiState.playerState == PlayerState.PLAYING)
+                        onEvent(
+                            if (uiState.playerState == PlayerState.PLAYING)
                                 PlayerUIEvent.PauseSong
                             else
                                 PlayerUIEvent.ResumeSong
                         )
                     },
                     playNextSong = {
-                        playerVM.onEvent(PlayerUIEvent.SkipToNextSong)
+                        onEvent(PlayerUIEvent.SkipToNextSong)
                     },
                     playPreviousSong = {
-                        playerVM.onEvent(PlayerUIEvent.SkipToPreviousSong)
+                        onEvent(PlayerUIEvent.SkipToPreviousSong)
                     },
                     onRewind = {
-                        musicControllerUiState.currentPosition.let { currentPosition ->
-                            playerVM.onEvent(PlayerUIEvent.SeekSongToPosition(if (currentPosition - 10 * 1000 < 0) 0 else currentPosition - 10 * 1000))
+                        uiState.currentPosition.let { currentPosition ->
+                            onEvent(PlayerUIEvent.SeekSongToPosition(if (currentPosition - 10 * 1000 < 0) 0 else currentPosition - 10 * 1000))
                         }
                     },
                     onForward = {
-                        playerVM.onEvent(PlayerUIEvent.SeekSongToPosition(musicControllerUiState.currentPosition + 10 * 1000))
+                        onEvent(PlayerUIEvent.SeekSongToPosition(uiState.currentPosition + 10 * 1000))
                     }
                 )
             }
@@ -203,7 +221,10 @@ fun SliderAndPlayerControl(
 }
 
 @Composable
-fun PlayerTopAppBar(composeNavigator: ComposeNavigator) {
+fun PlayerTopAppBar(
+    onBackPress: (PlayerUIEvent) -> Unit,
+    onDownload: (PlayerUIEvent) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,7 +232,7 @@ fun PlayerTopAppBar(composeNavigator: ComposeNavigator) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(onClick = {
-            composeNavigator.navigateUp()
+            onBackPress(PlayerUIEvent.OnBackPress)
         }) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
@@ -220,7 +241,7 @@ fun PlayerTopAppBar(composeNavigator: ComposeNavigator) {
             )
         }
         IconButton(onClick = {
-            // download
+            onDownload(PlayerUIEvent.OnDownload)
         }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_download),
@@ -252,7 +273,10 @@ fun PlayerFileName(currentSong: Song?, monkName: String, onFavoriteIconClick: (S
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSecondary,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.graphicsLayer {
+                    alpha = 0.60f
+                }
             )
 
             Text(monkName,
@@ -263,12 +287,6 @@ fun PlayerFileName(currentSong: Song?, monkName: String, onFavoriteIconClick: (S
                 modifier = Modifier.graphicsLayer {
                     alpha = 0.60f
                 })
-
-//            TitleText(title = currentSong.name)
-//            SubtitleText(
-//                subtitle = monkName,
-//                modifier = Modifier.alpha(0.7f)
-//            )
         }
         Image(
             imageVector = if (currentSong.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -372,15 +390,6 @@ fun PlayerSlider(
                     totalTime.toTime(), style = MaterialTheme.typography.bodySmall
                 )
             }
-
-//            Text(
-//                text = currentTime.toTime(),
-//                color = MaterialTheme.colorScheme.onSecondary
-//            )
-//            Text(
-//                text = totalTime.toTime(),
-//                color = MaterialTheme.colorScheme.onSecondary
-//            )
         }
         Slider(
             modifier = Modifier

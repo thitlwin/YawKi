@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.yawki.common.data.service.YawKiPlayerService
 import com.yawki.common.presentation.SharedViewModel
+import com.yawki.common_ui.theme.YawKiTheme
 import com.yawki.navigator.ComposeNavigator
 import com.yawki.navigator.YawKiRoute
 import com.yawki.ui_dashboard.nav.dashboardNavigation
@@ -32,15 +33,16 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 composeNavigator.handleNavigationCommands(navController)
             }
-
-            NavHost(
-                navController = navController,
-                startDestination = YawKiRoute.Dashboard.name
-            ) {
-                dashboardNavigation(
-                    sharedViewModel = sharedViewModel,
-                    composeNavigator = composeNavigator
-                )
+            YawKiTheme {
+                NavHost(
+                    navController = navController,
+                    startDestination = YawKiRoute.Dashboard.name
+                ) {
+                    dashboardNavigation(
+                        sharedViewModel = sharedViewModel,
+                        composeNavigator = composeNavigator
+                    )
+                }
             }
         }
     }

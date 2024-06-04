@@ -35,8 +35,7 @@ fun NavGraphBuilder.dashboardNavigation(
         }
 
         composable(YawKiScreens.PlayerUIScreen.name) {
-            PlayerUI(composeNavigator,
-                sharedViewModel = sharedViewModel)
+            PlayerUI(sharedViewModel = sharedViewModel)
         }
     }
 }

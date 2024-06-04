@@ -53,27 +53,25 @@ fun AudioListUI(
     audioListVM: AudioListVM = hiltViewModel(),
     sharedViewModel: SharedViewModel
 ) {
-
-    YawKiTheme {
-        val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
-        LaunchedEffect(key1 = Unit) {
-            audioListVM.onEvent(AudioListUIEvent.FetchSong(selectedMonk?.id ?: 0))
-        }
-        AudioListScreen(
-            selectedMonk = selectedMonk!!,
-            composeNavigator = composeNavigator,
-            audioListUIState = audioListVM.audioListScreenUIState,
-            onFavoriteIconClick = {
-                audioListVM.onEvent(AudioListUIEvent.OnFavoriteIconClick(it))
-            },
-            onItemClick = {
-                audioListVM.audioListScreenUIState.songs?.indexOf(it)?.let { songIndex ->
-                    sharedViewModel.setSelectedSongIndex(songIndex)
-                }
-                audioListVM.onEvent(AudioListUIEvent.OnSongClick(it))
-            }
-        )
+    val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
+    LaunchedEffect(key1 = Unit) {
+        audioListVM.onEvent(AudioListUIEvent.FetchSong(selectedMonk?.id ?: 0))
     }
+    AudioListScreen(
+        selectedMonk = selectedMonk!!,
+        composeNavigator = composeNavigator,
+        audioListUIState = audioListVM.audioListScreenUIState,
+        onFavoriteIconClick = {
+            audioListVM.onEvent(AudioListUIEvent.OnFavoriteIconClick(it))
+        },
+        onItemClick = {
+            sharedViewModel.setSelectedSong(it)
+            audioListVM.audioListScreenUIState.songs?.indexOf(it)?.let { songIndex ->
+                sharedViewModel.setSelectedSongIndex(songIndex)
+            }
+            audioListVM.onEvent(AudioListUIEvent.OnSongClick(it))
+        }
+    )
 }
 
 @Composable
