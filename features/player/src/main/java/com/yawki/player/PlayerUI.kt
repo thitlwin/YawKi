@@ -35,9 +35,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,10 +67,9 @@ fun PlayerUI(
     val state by playerVM.uiState.collectAsState()
     val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
     val selectedSongIndex = sharedViewModel.selectedSongIndexFlow.collectAsState().value ?: 0
-    val selectedSong = sharedViewModel.selecteSongFlow.collectAsState().value
 
     LaunchedEffect(key1 = Unit) {
-        playerVM.onEvent(PlayerUIEvent.BindInitialState(sharedViewModel.musicControllerUiState.value))
+        playerVM.onEvent(PlayerUIEvent.BindInitialState)
         playerVM.onEvent(PlayerUIEvent.PlaySong(selectedSongIndex))
     }
 
@@ -86,7 +83,8 @@ fun PlayerUI(
         }
 
         state.currentSong != null -> {
-            PlayerScreen(
+            Log.d("playerscrn", "state is $state")
+            ScreenContent(
                 uiState = state,
                 monk = selectedMonk,
                 onEvent = playerVM::onEvent
@@ -96,11 +94,12 @@ fun PlayerUI(
 }
 
 @Composable
-fun PlayerScreen(
+fun ScreenContent(
     uiState: PlayerUIState,
     monk: Monk?,
-    onEvent: (PlayerUIEvent) -> Unit
+    onEvent: (PlayerUIEvent) -> Unit,
 ) {
+    Log.d("playerscrn", "PlayerScreen----")
     Scaffold(
         containerColor = MaterialTheme.colorScheme.secondaryContainer,
         contentColor = MaterialTheme.colorScheme.secondary,
@@ -119,8 +118,6 @@ fun PlayerScreen(
                 backgroundColor = MaterialTheme.colorScheme.secondary,
                 shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
             ) {
-//                val musicControllerUiState =
-//                    sharedViewModel.musicControllerUiState.collectAsState().value
                 val iconResId =
                     if (uiState.playerState == PlayerState.PLAYING) R.drawable.ic_pause else R.drawable.ic_play
 
@@ -367,9 +364,8 @@ fun PlayerSlider(
     totalTime: Long,
     onSliderChange: (Float) -> Unit
 ) {
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
-    Log.d(TAG, "currentTime = $currentTime, currentTime.toTime()=${currentTime.toTime()}")
-    Log.d(TAG, "totalTime = $totalTime, totalTime.toTime()=${totalTime.toTime()}")
+    Log.d("slider", "currentTime = $currentTime, currentTime.toTime()=${currentTime.toTime()}")
+    Log.d("slider", "totalTime = $totalTime, totalTime.toTime()=${totalTime.toTime()}")
     Column(
         verticalArrangement = Arrangement.Center
     ) {

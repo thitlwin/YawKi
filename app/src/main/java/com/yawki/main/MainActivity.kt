@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.yawki.common.data.service.YawKiPlayerService
+import com.yawki.common.domain.usecases.DestroyMediaControllerUseCase
 import com.yawki.common.presentation.SharedViewModel
 import com.yawki.common_ui.theme.YawKiTheme
 import com.yawki.navigator.ComposeNavigator
@@ -23,6 +24,8 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var composeNavigator: ComposeNavigator
     private val sharedViewModel: SharedViewModel by viewModels()
+    @Inject
+    lateinit var destroyMediaControllerUseCase: DestroyMediaControllerUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +52,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        sharedViewModel.destroyMediaController()
+//        sharedViewModel.destroyMediaController()
+        destroyMediaControllerUseCase.invoke()
         stopService(Intent(this, YawKiPlayerService::class.java))
     }
 }

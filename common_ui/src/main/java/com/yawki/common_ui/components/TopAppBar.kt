@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.yawki.common.utils.ContentDescriptions
 import com.yawki.common_ui.R
 import com.yawki.navigator.ComposeNavigator
 
@@ -37,7 +38,7 @@ fun PrimaryTopApBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SecondaryTopApBar(composeNavigator: ComposeNavigator, title: String) {
+fun SecondaryTopApBar(title: String, onBackPress: () -> Unit) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -47,19 +48,19 @@ fun SecondaryTopApBar(composeNavigator: ComposeNavigator, title: String) {
         ),
         title = { Text(text = title) },
         navigationIcon = {
-            NavBackIcon(composeNavigator)
+            NavBackIcon{
+                onBackPress()
+            }
         }
     )
 }
 
 @Composable
-private fun NavBackIcon(composeNavigator: ComposeNavigator) {
-    IconButton(onClick = {
-        composeNavigator.navigateUp()
-    }) {
+private fun NavBackIcon(onBackPress: () -> Unit) {
+    IconButton(onClick = onBackPress) {
         Icon(
             imageVector = Icons.Filled.ArrowBack,
-            contentDescription = "Back",
+            contentDescription = ContentDescriptions.BACK,
             modifier = Modifier.padding(start = 8.dp),
             tint = MaterialTheme.colorScheme.onPrimary
         )

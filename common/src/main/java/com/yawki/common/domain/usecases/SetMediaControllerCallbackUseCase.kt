@@ -19,7 +19,7 @@ class SetMediaControllerCallbackUseCase @Inject constructor(
             isRepeatOneEnabled: Boolean
                 ) -> Unit
     ) {
-        Log.d("TAG", "SetMediaControllerCallbackUseCase.invoke()")
+//        Log.d("callback", "SetMediaControllerCallbackUseCase => usecase.invoke()")
         yawKiPlayerController.mediaControllerCallback = callback
     }
 }

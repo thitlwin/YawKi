@@ -11,7 +11,6 @@ class SkipToNextSongUseCase @Inject constructor(
 ) {
     operator fun invoke(updateUI: (Song?) -> Unit) {
         yawKiPlayerController.skipToNextSong()
-        Log.d(TAG, "next song=${yawKiPlayerController.getCurrentSong()?.name}")
         updateUI(yawKiPlayerController.getCurrentSong())
     }
 }

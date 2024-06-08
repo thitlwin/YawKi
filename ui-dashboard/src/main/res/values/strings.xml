@@ -6,4 +6,5 @@
     <string name="search">Search</string>
     <string name="profile">Profile</string>
     <string name="audio_list">Audio List</string>
+    <string name="empty_monk_list">Empty monk list.</string>
 </resources>

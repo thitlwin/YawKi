@@ -6,5 +6,6 @@ data class SongDto(
     val serialNo: Int = 0,
     val monkId: Int = 1,
     val monk: String = "",
-    val fileUrl: String = ""
+    val fileUrl: String = "",
+    val artworkUri: String = ""
 )

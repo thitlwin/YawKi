@@ -1,6 +1,5 @@
 package com.yawki.audiolist
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,62 +39,79 @@ import com.yawki.common.domain.models.song.Song
 import com.yawki.common.presentation.SharedViewModel
 import com.yawki.common.utils.TestTag
 import com.yawki.common_ui.components.EmptyView
+import com.yawki.common_ui.components.ErrorView
 import com.yawki.common_ui.components.ListItemDivider
+import com.yawki.common_ui.components.LoadingView
 import com.yawki.common_ui.components.SecondaryTopApBar
-import com.yawki.common_ui.theme.YawKiTheme
-import com.yawki.navigator.ComposeNavigator
 
-const val TAG = "AudioListUI --> "
+//const val TAG = "AudioListUI --> "
 
 @Composable
 fun AudioListUI(
-    composeNavigator: ComposeNavigator,
-    audioListVM: AudioListVM = hiltViewModel(),
     sharedViewModel: SharedViewModel
 ) {
+    val audioListVM: AudioListVM = hiltViewModel()
+    val state = audioListVM.audioListScreenUIState
     val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
     LaunchedEffect(key1 = Unit) {
         audioListVM.onEvent(AudioListUIEvent.FetchSong(selectedMonk?.id ?: 0))
     }
     AudioListScreen(
+        modifier = Modifier.fillMaxWidth(),
+        state = state,
         selectedMonk = selectedMonk!!,
-        composeNavigator = composeNavigator,
-        audioListUIState = audioListVM.audioListScreenUIState,
-        onFavoriteIconClick = {
-            audioListVM.onEvent(AudioListUIEvent.OnFavoriteIconClick(it))
-        },
-        onItemClick = {
-            sharedViewModel.setSelectedSong(it)
-            audioListVM.audioListScreenUIState.songs?.indexOf(it)?.let { songIndex ->
-                sharedViewModel.setSelectedSongIndex(songIndex)
+        onEvent = audioListVM::onEvent,
+        onSongClick = {
+            state.songs?.indexOf(it).let { songIndex ->
+                songIndex?.let {
+                    sharedViewModel.setSelectedSongIndex(it)
+                }
             }
-            audioListVM.onEvent(AudioListUIEvent.OnSongClick(it))
         }
     )
 }
 
 @Composable
 fun AudioListScreen(
-    composeNavigator: ComposeNavigator,
-    audioListUIState: AudioListUIState,
+    modifier: Modifier,
+    state: AudioListUIState,
     selectedMonk: Monk,
-    onFavoriteIconClick: (audio: Song) -> Unit,
-    onItemClick: (Song) -> Unit
+    onEvent: (AudioListUIEvent) -> Unit,
+    onSongClick: (Song) -> Unit,
 ) {
     Scaffold(
         topBar = {
-            SecondaryTopApBar(composeNavigator, title = stringResource(id = R.string.mp3))
+            SecondaryTopApBar(title = stringResource(id = R.string.mp3)) {
+                onEvent(AudioListUIEvent.OnBackPress)
+            }
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            AudioList(
-                selectedMonk = selectedMonk,
-                songList = audioListUIState.songs,
-                onFavoriteIconClick = onFavoriteIconClick,
-                onItemClick = onItemClick
-            )
+        Box(modifier = modifier.padding(innerPadding)) {
+            when {
+                state.loading -> {
+                    LoadingView()
+                }
+
+                state.error != null -> {
+                    ErrorView(throwable = state.error)
+                }
+
+                state.songs != null -> {
+                    if (state.songs.isEmpty())
+                        EmptyView(stringResource(id = R.string.empty_audio))
+                    else {
+                        AudioList(
+                            selectedMonk = selectedMonk,
+                            songList = state.songs,
+                            onFavoriteIconClick = { onEvent(AudioListUIEvent.OnFavoriteIconClick(it)) },
+                            onSongClick = {
+                                onSongClick(it)
+                                onEvent(AudioListUIEvent.OnSongClick(it))
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -105,7 +121,7 @@ fun AudioList(
     selectedMonk: Monk,
     songList: List<Song>?,
     onFavoriteIconClick: (audio: Song) -> Unit,
-    onItemClick: (Song) -> Unit
+    onSongClick: (Song) -> Unit
 ) {
     if (songList.isNullOrEmpty()) {
         return EmptyView(stringResource(id = R.string.empty_audio))
@@ -113,12 +129,11 @@ fun AudioList(
     LazyColumn {
         items(count = songList.size,
             itemContent = { item ->
-                Log.d(TAG, "song list item=> $item")
                 AudioListItem(
                     selectedMonk = selectedMonk,
                     item = songList[item],
-                    onFavoriteIconClick = onFavoriteIconClick,// { onEvent(AudioListUIEvent.OnFavoriteIconClick(it)) },
-                    onItemClick = onItemClick,
+                    onFavoriteIconClick = onFavoriteIconClick,
+                    onItemClick = onSongClick,
                 )
                 if (item != songList.size - 1)
                     ListItemDivider()
@@ -131,13 +146,12 @@ fun AudioList(
 fun AudioListItem(
     selectedMonk: Monk,
     item: Song,
-    modifier: Modifier = Modifier,
     onFavoriteIconClick: (audio: Song) -> Unit,
     onItemClick: (audio: Song) -> Unit
 ) {
     val typography = MaterialTheme.typography
     Row(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
             .testTag("${TestTag.AUDIO_LIST_SCREEN_LIST_ITEM}-${item.id}")

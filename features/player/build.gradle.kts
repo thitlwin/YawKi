@@ -57,4 +57,12 @@ dependencies {
 
     debugImplementation(Lib.Android.COMPOSE_UI_TOOLING)
 
+    // For Unit Testing
+    testImplementation(Lib.UnitTesting.mockitoCore)
+    testImplementation(Lib.UnitTesting.jUnit4)
+    testImplementation(Lib.UnitTesting.assertjCore)
+
+    // For Kotlin Coroutine Test
+    testImplementation(Lib.Kotlin.COROUTINE_TEST)
+
 }

@@ -29,7 +29,6 @@ fun NavGraphBuilder.dashboardNavigation(
 
         composable(YawKiScreens.AudioListUIScreen.name) {
             AudioListUI(
-                composeNavigator,
                 sharedViewModel = sharedViewModel
             )
         }

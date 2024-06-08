@@ -9,7 +9,8 @@ data class Song(
     val serialNo: Int,
     val monk: String,
     val fileUrl: String,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val artworkUri: String
 )
 
 
@@ -20,6 +21,7 @@ fun MediaItem.toSong() =
         monk = "",
         serialNo = 0,
         fileUrl = mediaId,
+        artworkUri = mediaMetadata.artworkUri.toString()
     )
 
 //fun MediaItem.toSong() =

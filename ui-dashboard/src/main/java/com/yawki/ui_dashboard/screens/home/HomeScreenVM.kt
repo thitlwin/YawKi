@@ -3,12 +3,10 @@ package com.yawki.ui_dashboard.screens.home
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yawki.common.domain.SafeResult
 import com.yawki.common.domain.usecases.GetMonksUseCase
-import com.yawki.common.presentation.SharedViewModel
 import com.yawki.navigator.ComposeNavigator
 import com.yawki.navigator.YawKiScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +16,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenVM @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val composeNavigator: ComposeNavigator,
     private val getMonksUseCase: GetMonksUseCase,
 ) : ViewModel() {
@@ -31,7 +28,7 @@ class HomeScreenVM @Inject constructor(
     }
 
     private fun fetchMonks() {
-//        dashboardUiState = dashboardUiState.copy(loading = true)
+        homeScreenUIState = homeScreenUIState.copy(loading = true)
         viewModelScope.launch {
             getMonksUseCase.invoke().catch {
                 homeScreenUIState = homeScreenUIState.copy(
@@ -40,7 +37,7 @@ class HomeScreenVM @Inject constructor(
                 )
             }.collect {
                 homeScreenUIState = when (it) {
-                    is SafeResult.Failure -> homeScreenUIState.copy(
+                    is SafeResult.Error -> homeScreenUIState.copy(
                         loading = false,
                         errorMessage = it.message
                     )
@@ -60,10 +57,8 @@ class HomeScreenVM @Inject constructor(
         when (event) {
             HomeScreenUIEvent.FetchMonk -> fetchMonks()
             is HomeScreenUIEvent.OnMonkSelected -> {
-                homeScreenUIState.copy(selectedMonk = event.selectedMonk)
                 composeNavigator.navigate(YawKiScreens.AudioListUIScreen.route)
             }
         }
     }
-
 }

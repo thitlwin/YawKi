@@ -2,6 +2,9 @@ package com.yawki.common.data.service
 
 import android.content.ComponentName
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -10,13 +13,16 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import com.yawki.common.R
 import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.song.Song
 import com.yawki.common.domain.models.song.toSong
 import com.yawki.common.domain.service.YawKiPlayerController
+import java.io.ByteArrayOutputStream
 
 const val TAG = "YawKiPlayerCtrImpl-->"
-class YawKiPlayerControllerImpl(context: Context) : YawKiPlayerController {
+
+class YawKiPlayerControllerImpl(val context: Context) : YawKiPlayerController {
 
     private var mediaControllerFuture: ListenableFuture<MediaController>
     private val mediaController: MediaController?
@@ -37,13 +43,19 @@ class YawKiPlayerControllerImpl(context: Context) : YawKiPlayerController {
         val sessionToken =
             SessionToken(context, ComponentName(context, YawKiPlayerService::class.java))
         mediaControllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
-        mediaControllerFuture.addListener({ controllerListener() }, MoreExecutors.directExecutor())
+        mediaControllerFuture.addListener({
+            Log.d("callback", "YawKiPlayerControllerImpl => addListener---")
+            controllerListener()
+        }, MoreExecutors.directExecutor())
     }
 
     private fun controllerListener() {
+        Log.d("callback", "YawKiPlayerControllerImpl => controllerListener---")
+
         mediaController?.addListener(object : Player.Listener {
             override fun onEvents(player: Player, events: Player.Events) {
                 super.onEvents(player, events)
+                Log.d("callback", "YawKiPlayerControllerImpl => Player.Listener---$events")
 
                 with(player) {
                     mediaControllerCallback?.invoke(
@@ -52,7 +64,7 @@ class YawKiPlayerControllerImpl(context: Context) : YawKiPlayerController {
                         currentPosition.coerceAtLeast(0L),
                         duration.coerceAtLeast(0L),
                         shuffleModeEnabled,
-                        repeatMode == Player.REPEAT_MODE_ONE
+                        repeatMode == Player.REPEAT_MODE_ALL
                     )
                 }
             }
@@ -67,20 +79,6 @@ class YawKiPlayerControllerImpl(context: Context) : YawKiPlayerController {
         }
 
     override fun addMediaItems(songs: List<Song>) {
-//         MediaItem.Builder()
-//                .setMediaId(it.songUrl)
-//                .setUri(it.songUrl)
-//                .setMediaMetadata(
-//                    MediaMetadata.Builder()
-//                        .setTitle(it.title)
-//                        .setSubtitle(it.subtitle)
-//                        .setArtist(it.subtitle)
-//                        .setArtworkUri(Uri.parse(it.imageUrl))
-//                        .build()
-//                )
-//                .build()
-
-
         val mediaItems = songs.map {
             Log.d("TAG", "-----it.songUrl=>${it.fileUrl}")
             MediaItem.Builder()
@@ -89,9 +87,18 @@ class YawKiPlayerControllerImpl(context: Context) : YawKiPlayerController {
                 .setMediaMetadata(
                     MediaMetadata.Builder()
                         .setTitle(it.name)
-//                        .setSubtitle(it.monkId)
+                        .setSubtitle(it.monk)
                         .setArtist(it.monk)
-//                        .setArtworkUri(Uri.parse(it.))
+                        .apply {
+                            if (it.artworkUri.isNotEmpty())
+                                setArtworkUri(Uri.parse(it.artworkUri))
+                            else {
+                                setArtworkData(
+                                    getDefaultArtWork(),
+                                    MediaMetadata.PICTURE_TYPE_FRONT_COVER
+                                )
+                            }
+                        }
                         .build()
                 )
                 .build()
@@ -104,6 +111,13 @@ class YawKiPlayerControllerImpl(context: Context) : YawKiPlayerController {
 
         Log.d(TAG, "addMediaItems count-->${mediaController?.mediaItemCount}")
 
+    }
+
+    private fun getDefaultArtWork(): ByteArray {
+        val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.little_monk)
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream)
+        return outputStream.toByteArray()
     }
 
     override fun play(mediaItemIndex: Int) {
@@ -141,6 +155,7 @@ class YawKiPlayerControllerImpl(context: Context) : YawKiPlayerController {
     override fun destroy() {
         MediaController.releaseFuture(mediaControllerFuture)
         mediaControllerCallback = null
+        Log.d(TAG, "destroy player---->")
     }
 
     override fun skipToNextSong() {

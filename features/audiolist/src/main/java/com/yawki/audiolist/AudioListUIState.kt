@@ -4,9 +4,7 @@ import com.yawki.common.domain.models.monk.Monk
 import com.yawki.common.domain.models.song.Song
 
 data class AudioListUIState(
-    val loading: Boolean? = false,
+    val loading: Boolean = false,
+    val error: Throwable? = null,
     val songs: List<Song>? = emptyList(),
-//    val selectedMonk: Monk? = null,
-//    val selectedSong: Song? = null,
-    val errorMessage: String? = null
 )

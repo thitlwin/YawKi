@@ -11,7 +11,8 @@ class SongDomainModelMapper @Inject constructor() : DomainModelMapper<SongDto, S
             name = dtoModel.name,
             serialNo = dtoModel.serialNo,
             monk = dtoModel.monk,
-            fileUrl = dtoModel.fileUrl)
+            fileUrl = dtoModel.fileUrl,
+            artworkUri = dtoModel.artworkUri)
     }
 
     override fun mapToDto(domainModel: Song): SongDto {
@@ -20,7 +21,8 @@ class SongDomainModelMapper @Inject constructor() : DomainModelMapper<SongDto, S
             name = domainModel.name,
             serialNo = domainModel.serialNo,
             monkId = 0,
-            fileUrl = domainModel.fileUrl
+            fileUrl = domainModel.fileUrl,
+            artworkUri = domainModel.artworkUri
         )
     }
 }

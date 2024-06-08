@@ -51,6 +51,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
 
     implementation(project(":navigator"))
+    implementation(project(":common"))
 //    api(Lib.Android.GOOGLE_MATERIAL)
 
     debugImplementation(Lib.Android.COMPOSE_UI_TOOLING)

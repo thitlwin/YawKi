@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yawki.common.domain.SafeResult
@@ -20,7 +19,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AudioListVM @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val composeNavigator: ComposeNavigator,
     private val getSongsUseCase: GetSongsUseCase,
     private val addMediaItemsUseCase: AddMediaItemsUseCase,
@@ -29,21 +27,19 @@ class AudioListVM @Inject constructor(
         private set
 
     private fun fetchAudios(monkId: Int) {
-        Log.d(TAG, "fetchAudios-->monkId=$monkId")
         audioListScreenUIState = audioListScreenUIState.copy(loading = true)
         viewModelScope.launch {
-            Log.d(TAG, "fetchAudios lunch")
 
             getSongsUseCase.invoke(monkId).catch {
                 audioListScreenUIState = audioListScreenUIState.copy(
                     loading = false,
-                    errorMessage = it.message
+                    error = it
                 )
             }.collect {
                 audioListScreenUIState = when (it) {
-                    is SafeResult.Failure -> audioListScreenUIState.copy(
+                    is SafeResult.Error -> audioListScreenUIState.copy(
                         loading = false,
-                        errorMessage = it.message
+                        error = it.exception
                     )
 
                     is SafeResult.Success -> {
@@ -65,7 +61,12 @@ class AudioListVM @Inject constructor(
             is AudioListUIEvent.FetchSong -> fetchAudios(event.monkId)
             is AudioListUIEvent.OnSongClick -> onSongClick(event.selectedSong)
             is AudioListUIEvent.OnFavoriteIconClick -> onFavoriteIconClick(event.selectedSong)
+            AudioListUIEvent.OnBackPress -> onBackPress()
         }
+    }
+
+    private fun onBackPress() {
+        composeNavigator.navigateUp()
     }
 
     private fun onSongClick(selectedSong: Song) {
@@ -73,7 +74,7 @@ class AudioListVM @Inject constructor(
     }
 
     private fun onFavoriteIconClick(selectedSong: Song) {
-        Log.d(TAG, "selectedSong isFavorite=${selectedSong.isFavorite}")
+//        Log.d(TAG, "selectedSong isFavorite=${selectedSong.isFavorite}")
         audioListScreenUIState = audioListScreenUIState.copy(songs = audioListScreenUIState.songs?.map {
             if (it.id == selectedSong.id)
                 it.copy(isFavorite = !it.isFavorite)

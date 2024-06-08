@@ -5,7 +5,6 @@ import com.yawki.common.data.datasource.remote.SongRemoteDataSource
 import com.yawki.common.data.mapper.DomainModelMapper
 import com.yawki.common.data.models.SongDto
 import com.yawki.common.domain.SafeResult
-import com.yawki.common.domain.getSuccessOrNull
 import com.yawki.common.domain.models.song.Song
 import com.yawki.common.domain.repositories.SongRepository
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +20,8 @@ class SongRepositoryImpl @Inject constructor(
         val songs = songRemoteDataSource.getSongByMonk(monkId).await().toObjects<SongDto>()
         if (songs.isNotEmpty()) {
             emit(SafeResult.Success(songs.map { domainMapper.mapToDomain(it) }))
+        } else {
+            emit(SafeResult.Error(Exception("No songs found")))
         }
     }
 }

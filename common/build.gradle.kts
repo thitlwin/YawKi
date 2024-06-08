@@ -49,5 +49,23 @@ dependencies {
     implementation(Lib.Media3.EXOPLAYER)
     implementation(Lib.Media3.MEDIA3_SESSION)
 
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
+    // For AppCompat
+    implementation(Lib.AppCompat.APPCOMPAT_RESOURCES)
+    // For Lifecycle
+    implementation(Lib.Android.LIFECYCLE_RUNTIME)
+
+    // For Unit Testing
+    testImplementation(Lib.UnitTesting.mockk)
+    testImplementation(Lib.UnitTesting.jUnit4)
+    testImplementation(Lib.UnitTesting.assertjCore)
+
+    // For Hilt Android Testing
+    androidTestImplementation(Lib.Di.hiltAndroidTesting)
+    kaptAndroidTest(Lib.Di.hiltAndroidCompiler)
+
+    // For Kotlin Coroutine Test
+    testImplementation(Lib.Kotlin.COROUTINE_TEST)
+    // Flow Testing
+    testImplementation(Lib.Turbine.Turbine)
+
 }

@@ -3,7 +3,7 @@ package com.yawki.common.domain
 sealed class SafeResult<out T> {
 
     data class Success<T>(val data: T) : SafeResult<T>()
-    data class Failure(
+    data class Error(
         val exception: Exception? = Exception("Unknown Error"),
         val message: String = exception?.localizedMessage ?: ""
     ) : SafeResult<Nothing>()
@@ -13,7 +13,7 @@ sealed class SafeResult<out T> {
     override fun toString(): String {
         return when (this) {
             is Success -> "Success[data=$data]"
-            is Failure -> "Failure[exception=$exception]"
+            is Error -> "Failure[exception=$exception]"
             is Loading -> "Loading"
         }
     }
@@ -33,9 +33,9 @@ fun <T> SafeResult<T>.getSuccessOrNull(): T? {
     }
 }
 
-fun <T> SafeResult<T>.getErrorOrNull(): SafeResult.Failure? {
+fun <T> SafeResult<T>.getErrorOrNull(): SafeResult.Error? {
     return when (this) {
-        is SafeResult.Failure -> this
+        is SafeResult.Error -> this
         else -> null
     }
 }

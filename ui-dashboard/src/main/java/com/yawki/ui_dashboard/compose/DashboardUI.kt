@@ -52,7 +52,6 @@ fun DashboardUI(
         DashboardScreen(
             scaffoldState,
             dashboardNavController,
-            composeNavigator,
             sharedViewModel
         )
     }
@@ -62,13 +61,11 @@ fun DashboardUI(
 fun DashboardScreen(
     scaffoldState: ScaffoldState,
     dashboardNavController: NavHostController,
-    composeNavigator: ComposeNavigator,
     sharedViewModel: SharedViewModel,
 ) {
     DashboardScaffold(
         scaffoldState = scaffoldState,
         dashboardNavController = dashboardNavController,
-        composeNavigator = composeNavigator,
         sharedViewModel = sharedViewModel
     )
 }
@@ -77,7 +74,6 @@ fun DashboardScreen(
 private fun DashboardScaffold(
     scaffoldState: ScaffoldState,
     dashboardNavController: NavHostController,
-    composeNavigator: ComposeNavigator,
     sharedViewModel: SharedViewModel,
 ) {
     Surface(contentColor = MaterialTheme.colorScheme.background) {
@@ -121,7 +117,7 @@ fun DashboardBottomNavBar(navController: NavHostController) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
         val dashTabs = getDashTabs()
-        dashTabs.forEachIndexed { index, screen ->
+        dashTabs.forEachIndexed { _, screen ->
             BottomNavItem(screen, currentDestination, navController)
         }
     }
