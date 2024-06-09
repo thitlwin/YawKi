@@ -15,9 +15,14 @@
       </SelectionState>
       <SelectionState runConfigName="AudioListUIKtTest">
         <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="testLoadingStateDisplayed()">
-        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2024-06-09T07:57:43.895821Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/thit/.android/avd/Pixel_7_Pro_API_34.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="testErrorStateDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
@@ -25,7 +30,10 @@
       <SelectionState runConfigName="testEmptyStateDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testAudioListDisplayedWithSongs()">
+      <SelectionState runConfigName="PlayerUIKtTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testPlayerScreenDisplayed()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -13,7 +13,6 @@ import com.yawki.ui_dashboard.compose.DashboardUI
 
 
 fun NavGraphBuilder.dashboardNavigation(
-    composeNavigator: ComposeNavigator,
     sharedViewModel: SharedViewModel,
 ) {
     navigation(
@@ -22,7 +21,6 @@ fun NavGraphBuilder.dashboardNavigation(
     ) {
         composable(YawKiScreens.Dashboard.name) {
             DashboardUI(
-                composeNavigator,
                 sharedViewModel = sharedViewModel
             )
         }

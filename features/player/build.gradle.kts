@@ -62,6 +62,12 @@ dependencies {
     testImplementation(Lib.UnitTesting.jUnit4)
     testImplementation(Lib.UnitTesting.assertjCore)
 
+    // For UI Testing
+    androidTestImplementation(Lib.UITesting.jUnitUITest)
+    debugImplementation(Lib.UITesting.uiTestManifest)
+    androidTestImplementation(Lib.UnitTesting.mockitoCore)
+    androidTestImplementation(Lib.UITesting.mockitoAndroid)
+
     // For Kotlin Coroutine Test
     testImplementation(Lib.Kotlin.COROUTINE_TEST)
 

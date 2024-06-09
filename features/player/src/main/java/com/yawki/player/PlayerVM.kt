@@ -97,6 +97,7 @@ class PlayerVM @Inject constructor(
     }
 
     private fun onBackPress() {
+        Log.d(TAG, "onBackPress:--- ")
         composeNavigator.navigateUp()
     }
 }

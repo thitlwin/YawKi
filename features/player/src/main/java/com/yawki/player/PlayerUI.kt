@@ -7,8 +7,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +45,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,6 +57,8 @@ import com.yawki.common.domain.models.monk.Monk
 import com.yawki.common.domain.models.song.Song
 import com.yawki.common.presentation.PlayerUIState
 import com.yawki.common.presentation.SharedViewModel
+import com.yawki.common.utils.ContentDescriptions
+import com.yawki.common.utils.TestTags
 import com.yawki.common.utils.toTime
 import com.yawki.common_ui.components.ErrorView
 import com.yawki.common_ui.components.LoadingView
@@ -73,22 +78,42 @@ fun PlayerUI(
         playerVM.onEvent(PlayerUIEvent.PlaySong(selectedSongIndex))
     }
 
-    when {
-        state.loading -> {
-            LoadingView()
-        }
+    PlayerScreen(
+        uiState = state,
+        monk = selectedMonk,
+        onEvent = playerVM::onEvent
+    )
+}
 
-        state.error != null -> {
-            ErrorView(throwable = state.error!!)
-        }
+@Composable
+fun PlayerScreen(
+    uiState: PlayerUIState,
+    monk: Monk?,
+    onEvent: (PlayerUIEvent) -> Unit,
+) {
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        contentColor = MaterialTheme.colorScheme.secondary,
+        modifier = Modifier.statusBarsPadding(),
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            when {
+                uiState.loading -> {
+                    LoadingView()
+                }
 
-        state.currentSong != null -> {
-            Log.d("playerscrn", "state is $state")
-            ScreenContent(
-                uiState = state,
-                monk = selectedMonk,
-                onEvent = playerVM::onEvent
-            )
+                uiState.error != null -> {
+                    ErrorView(throwable = uiState.error!!)
+                }
+
+                uiState.currentSong != null -> {
+                    ScreenContent(
+                        uiState = uiState,
+                        monk = monk,
+                        onEvent = onEvent
+                    )
+                }
+            }
         }
     }
 }
@@ -97,82 +122,74 @@ fun PlayerUI(
 fun ScreenContent(
     uiState: PlayerUIState,
     monk: Monk?,
-    onEvent: (PlayerUIEvent) -> Unit,
+    onEvent: (PlayerUIEvent) -> Unit
 ) {
-    Log.d("playerscrn", "PlayerScreen----")
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        contentColor = MaterialTheme.colorScheme.secondary,
-        modifier = Modifier.statusBarsPadding(),
-    ) { innerPadding ->
-        Column(verticalArrangement = Arrangement.Top) {
-            PlayerTopAppBar(
-                onDownload = onEvent,
-                onBackPress = onEvent
-            )
-            // Image Card
-            Material3Card(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .fillMaxWidth(),
-                backgroundColor = MaterialTheme.colorScheme.secondary,
-                shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-            ) {
-                val iconResId =
-                    if (uiState.playerState == PlayerState.PLAYING) R.drawable.ic_pause else R.drawable.ic_play
+    Column(verticalArrangement = Arrangement.Top) {
+        PlayerTopAppBar(
+            onDownload = onEvent,
+            onBackPress = onEvent
+        )
+        // Image Card
+        Material3Card(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .fillMaxWidth(),
+            backgroundColor = MaterialTheme.colorScheme.secondary,
+            shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+        ) {
+            val iconResId =
+                if (uiState.playerState == PlayerState.PLAYING) R.drawable.ic_pause else R.drawable.ic_play
 
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxHeight()
-                        .fillMaxWidth()
-                ) {
-                    CenterImage()
-                    PlayerFileName(
-                        currentSong = uiState.currentSong,
-                        monkName = monk?.name ?: "",
-                        onFavoriteIconClick = {}
-                    )
-                }
-                SliderAndPlayerControl(
-                    currentTime = uiState.currentPosition,
-                    totalTime = uiState.totalDuration,
-                    onSliderChange = { newPosition ->
-                        onEvent(
-                            PlayerUIEvent.SeekSongToPosition(
-                                newPosition.toLong()
-                            )
-                        )
-                    },
-                    playPauseIcon = iconResId,
-                    playOrToggleSong = {
-                        onEvent(
-                            if (uiState.playerState == PlayerState.PLAYING)
-                                PlayerUIEvent.PauseSong
-                            else
-                                PlayerUIEvent.ResumeSong
-                        )
-                    },
-                    playNextSong = {
-                        onEvent(PlayerUIEvent.SkipToNextSong)
-                    },
-                    playPreviousSong = {
-                        onEvent(PlayerUIEvent.SkipToPreviousSong)
-                    },
-                    onRewind = {
-                        uiState.currentPosition.let { currentPosition ->
-                            onEvent(PlayerUIEvent.SeekSongToPosition(if (currentPosition - 10 * 1000 < 0) 0 else currentPosition - 10 * 1000))
-                        }
-                    },
-                    onForward = {
-                        onEvent(PlayerUIEvent.SeekSongToPosition(uiState.currentPosition + 10 * 1000))
-                    }
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            ) {
+                CenterImage()
+                PlayerFileName(
+                    currentSong = uiState.currentSong,
+                    monkName = monk?.name ?: "",
+                    onFavoriteIconClick = {}
                 )
             }
-
+            SliderAndPlayerControl(
+                currentTime = uiState.currentPosition,
+                totalTime = uiState.totalDuration,
+                onSliderChange = { newPosition ->
+                    onEvent(
+                        PlayerUIEvent.SeekSongToPosition(
+                            newPosition.toLong()
+                        )
+                    )
+                },
+                playPauseIcon = iconResId,
+                playOrToggleSong = {
+                    onEvent(
+                        if (uiState.playerState == PlayerState.PLAYING)
+                            PlayerUIEvent.PauseSong
+                        else
+                            PlayerUIEvent.ResumeSong
+                    )
+                },
+                playNextSong = {
+                    onEvent(PlayerUIEvent.SkipToNextSong)
+                },
+                playPreviousSong = {
+                    onEvent(PlayerUIEvent.SkipToPreviousSong)
+                },
+                onRewind = {
+                    uiState.currentPosition.let { currentPosition ->
+                        onEvent(PlayerUIEvent.SeekSongToPosition(if (currentPosition - 10 * 1000 < 0) 0 else currentPosition - 10 * 1000))
+                    }
+                },
+                onForward = {
+                    onEvent(PlayerUIEvent.SeekSongToPosition(uiState.currentPosition + 10 * 1000))
+                }
+            )
         }
+
     }
 }
 
@@ -225,7 +242,8 @@ fun PlayerTopAppBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, top = 10.dp, end = 20.dp),
+            .padding(start = 20.dp, top = 10.dp, end = 20.dp)
+            .testTag(TestTags.PLAYER_TOP_APP_BAR),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(onClick = {
@@ -271,9 +289,11 @@ fun PlayerFileName(currentSong: Song?, monkName: String, onFavoriteIconClick: (S
                 color = MaterialTheme.colorScheme.onSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.graphicsLayer {
-                    alpha = 0.60f
-                }
+                modifier = Modifier
+                    .graphicsLayer {
+                        alpha = 0.60f
+                    }
+                    .testTag(TestTags.PLAYER_FILE_NAME)
             )
 
             Text(monkName,
@@ -281,9 +301,12 @@ fun PlayerFileName(currentSong: Song?, monkName: String, onFavoriteIconClick: (S
                 color = MaterialTheme.colorScheme.onSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.graphicsLayer {
-                    alpha = 0.60f
-                })
+                modifier = Modifier
+                    .graphicsLayer {
+                        alpha = 0.60f
+                    }
+                    .testTag(TestTags.PLAYER_MONK_NAME)
+            )
         }
         Image(
             imageVector = if (currentSong.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -313,7 +336,7 @@ fun PlayerControl(
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_skip_prev),
-            contentDescription = "Logo",
+            contentDescription = ContentDescriptions.SKIP_TO_PREVIOUS_SONG,
             modifier = Modifier
                 .size(30.dp)
                 .clickable(onClick = playPreviousSong),
@@ -321,7 +344,7 @@ fun PlayerControl(
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_backward_10_sec),
-            contentDescription = "Replay 10 seconds",
+            contentDescription = ContentDescriptions.REPLAY_10_SECONDS,
             modifier = Modifier
                 .clip(CircleShape)
                 .clickable(onClick = onRewind)
@@ -331,7 +354,7 @@ fun PlayerControl(
 
         Image(
             painter = painterResource(playPauseIcon),
-            contentDescription = "Logo",
+            contentDescription = ContentDescriptions.PLAYER_PLAY_PAUSE_BUTTON,
             modifier = Modifier
                 .size(50.dp)
                 .clip(CircleShape)
@@ -340,7 +363,7 @@ fun PlayerControl(
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_forward_10_sec),
-            contentDescription = "Skip 10 seconds",
+            contentDescription = ContentDescriptions.SKIP_10_SECONDS,
             modifier = Modifier
                 .clip(CircleShape)
                 .clickable(onClick = onForward)
@@ -349,7 +372,7 @@ fun PlayerControl(
         )
         Image(
             painter = painterResource(id = R.drawable.ic_skip_next),
-            contentDescription = "Logo",
+            contentDescription = ContentDescriptions.SKIP_TO_NEXT_SONG,
             modifier = Modifier
                 .size(30.dp)
                 .clickable(onClick = playNextSong),
@@ -431,7 +454,8 @@ fun CenterImage(modifier: Modifier = Modifier) {
                 CircleShape
             )
             .padding(borderWidth)
-            .clip(CircleShape),
+            .clip(CircleShape)
+            .testTag(TestTags.PLAYER_IMAGE),
         contentScale = ContentScale.Crop
     )
 }

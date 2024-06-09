@@ -43,7 +43,6 @@ import com.yawki.ui_dashboard.screens.setting.SettingScreenUI
 
 @Composable
 fun DashboardUI(
-    composeNavigator: ComposeNavigator,
     sharedViewModel: SharedViewModel,
 ) {
     val scaffoldState = rememberScaffoldState()
