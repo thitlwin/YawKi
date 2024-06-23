@@ -21,5 +21,9 @@ object ContentDescriptions {
     const val SKIP_TO_PREVIOUS_SONG: String = "Skip to previous song"
     const val BACK = "BACK"
     const val PLAYER_PLAY_PAUSE_BUTTON: String = "Play/Pause Button"
+    const val CLOSE_PLAYER_BUTTON: String = "Close the player button"
+}
 
+object KEY_ARGS {
+    const val SELECTED_MONK: String = "selectedMonkId"
 }

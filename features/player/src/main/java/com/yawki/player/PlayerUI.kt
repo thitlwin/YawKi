@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,7 +36,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,21 +46,26 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yawki.common.data.DataProvider
 import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.monk.Monk
 import com.yawki.common.domain.models.song.Song
+import com.yawki.common.presentation.PlayerControllerUIEvent
+import com.yawki.common.presentation.PlayerUIEvent
 import com.yawki.common.presentation.PlayerUIState
 import com.yawki.common.presentation.SharedViewModel
 import com.yawki.common.utils.ContentDescriptions
 import com.yawki.common.utils.TestTags
 import com.yawki.common.utils.toTime
+import com.yawki.common_ui.components.EmptyView
 import com.yawki.common_ui.components.ErrorView
 import com.yawki.common_ui.components.LoadingView
 import com.yawki.common_ui.components.Material3Card
@@ -69,19 +75,27 @@ fun PlayerUI(
     sharedViewModel: SharedViewModel,
 ) {
     val playerVM: PlayerVM = hiltViewModel()
-    val state by playerVM.uiState.collectAsState()
+    val state = sharedViewModel.playerUiStateFlow.collectAsState().value
     val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
-    val selectedSongIndex = sharedViewModel.selectedSongIndexFlow.collectAsState().value ?: 0
-
-    LaunchedEffect(key1 = Unit) {
-        playerVM.onEvent(PlayerUIEvent.BindInitialState)
-        playerVM.onEvent(PlayerUIEvent.PlaySong(selectedSongIndex))
-    }
+//    val selectedSongIndex = sharedViewModel.selectedSongIndexFlow.collectAsState().value ?: 0
+//    Log.d("TAG", "PlayerUI: selectedSongIndex = $selectedSongIndex")
+//    if (!state.isPlaying) {
+//        LaunchedEffect(key1 = Unit) {
+//            Log.d("TAG", "PlayerUI: launch playsong = $selectedSongIndex")
+//            sharedViewModel.onPlayerEvent(PlayerControllerUIEvent.PlaySong(selectedSongIndex))
+//        }
+//    }
 
     PlayerScreen(
         uiState = state,
         monk = selectedMonk,
-        onEvent = playerVM::onEvent
+        onPlayerControllerEvent = {
+            sharedViewModel.onPlayerEvent(it)
+        },
+        onEvent = {
+            playerVM.onEvent(it)
+//            sharedViewModel.updatePlayerUIState(playerVM.uiState.value)
+        }
     )
 }
 
@@ -89,6 +103,7 @@ fun PlayerUI(
 fun PlayerScreen(
     uiState: PlayerUIState,
     monk: Monk?,
+    onPlayerControllerEvent: (PlayerControllerUIEvent) -> Unit,
     onEvent: (PlayerUIEvent) -> Unit,
 ) {
     Scaffold(
@@ -110,8 +125,13 @@ fun PlayerScreen(
                     ScreenContent(
                         uiState = uiState,
                         monk = monk,
-                        onEvent = onEvent
+                        onPlayerControllerEvent = onPlayerControllerEvent,
+                        onPlayerUIEvent = onEvent
                     )
+                }
+
+                else -> {
+                    EmptyView(message = "No songs found!")
                 }
             }
         }
@@ -122,12 +142,13 @@ fun PlayerScreen(
 fun ScreenContent(
     uiState: PlayerUIState,
     monk: Monk?,
-    onEvent: (PlayerUIEvent) -> Unit
+    onPlayerControllerEvent: (PlayerControllerUIEvent) -> Unit,
+    onPlayerUIEvent: (PlayerUIEvent) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.Top) {
         PlayerTopAppBar(
-            onDownload = onEvent,
-            onBackPress = onEvent
+            onDownload = onPlayerUIEvent,
+            onBackPress = onPlayerUIEvent
         )
         // Image Card
         Material3Card(
@@ -158,38 +179,37 @@ fun ScreenContent(
                 currentTime = uiState.currentPosition,
                 totalTime = uiState.totalDuration,
                 onSliderChange = { newPosition ->
-                    onEvent(
-                        PlayerUIEvent.SeekSongToPosition(
+                    onPlayerControllerEvent(
+                        PlayerControllerUIEvent.SeekSongToPosition(
                             newPosition.toLong()
                         )
                     )
                 },
                 playPauseIcon = iconResId,
                 playOrToggleSong = {
-                    onEvent(
+                    onPlayerControllerEvent(
                         if (uiState.playerState == PlayerState.PLAYING)
-                            PlayerUIEvent.PauseSong
+                            PlayerControllerUIEvent.PauseSong
                         else
-                            PlayerUIEvent.ResumeSong
+                            PlayerControllerUIEvent.ResumeSong
                     )
                 },
                 playNextSong = {
-                    onEvent(PlayerUIEvent.SkipToNextSong)
+                    onPlayerControllerEvent(PlayerControllerUIEvent.SkipToNextSong)
                 },
                 playPreviousSong = {
-                    onEvent(PlayerUIEvent.SkipToPreviousSong)
+                    onPlayerControllerEvent(PlayerControllerUIEvent.SkipToPreviousSong)
                 },
                 onRewind = {
                     uiState.currentPosition.let { currentPosition ->
-                        onEvent(PlayerUIEvent.SeekSongToPosition(if (currentPosition - 10 * 1000 < 0) 0 else currentPosition - 10 * 1000))
+                        onPlayerControllerEvent(PlayerControllerUIEvent.SeekSongToPosition(if (currentPosition - 10 * 1000 < 0) 0 else currentPosition - 10 * 1000))
                     }
                 },
                 onForward = {
-                    onEvent(PlayerUIEvent.SeekSongToPosition(uiState.currentPosition + 10 * 1000))
+                    onPlayerControllerEvent(PlayerControllerUIEvent.SeekSongToPosition(uiState.currentPosition + 10 * 1000))
                 }
             )
         }
-
     }
 }
 

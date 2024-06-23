@@ -2,33 +2,23 @@ package com.yawki.common.domain.models.song
 
 import androidx.media3.common.MediaItem
 
-
 data class Song(
-    val id: String,
+    val id: Int,
     val name: String,
     val serialNo: Int,
-    val monk: String,
+    val monkName: String,
     val fileUrl: String,
     val isFavorite: Boolean = false,
-    val artworkUri: String
+    val artworkUri: String,
+    var isPlaying: Boolean = false
 )
-
 
 fun MediaItem.toSong() =
     Song(
-        id = mediaId,
+        id = mediaMetadata.trackNumber ?: 0,
         name = mediaMetadata.title.toString(),
-        monk = "",
+        monkName = mediaMetadata.subtitle.toString(),
         serialNo = 0,
         fileUrl = mediaId,
-        artworkUri = mediaMetadata.artworkUri.toString()
+        artworkUri = if(mediaMetadata.artworkUri == null) "" else mediaMetadata.artworkUri.toString(),
     )
-
-//fun MediaItem.toSong() =
-//    Song(
-//        mediaId = mediaId,
-//        title = mediaMetadata.title.toString(),
-//        subtitle = mediaMetadata.subtitle.toString(),
-//        songUrl = mediaId,
-//        imageUrl = mediaMetadata.artworkUri.toString()
-//    )

@@ -3,6 +3,7 @@ package com.yawki.common.di
 import android.content.Context
 import com.yawki.common.data.service.YawKiPlayerControllerImpl
 import com.yawki.common.domain.service.YawKiPlayerController
+import com.yawki.common.presentation.EventBus
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,4 +18,8 @@ object AppModule {
     @Provides
     fun provideYawKiPlayerController(@ApplicationContext context: Context): YawKiPlayerController =
         YawKiPlayerControllerImpl(context)
+
+    @Singleton
+    @Provides
+    fun provideEventBus(): EventBus = EventBus()
 }

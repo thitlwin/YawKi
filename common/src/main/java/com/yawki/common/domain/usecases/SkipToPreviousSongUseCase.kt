@@ -7,8 +7,8 @@ import javax.inject.Inject
 class SkipToPreviousSongUseCase @Inject constructor(
     private val yawKiPlayerController: YawKiPlayerController
 ) {
-    operator fun invoke(updateUI: (Song?) -> Unit) {
+    operator fun invoke() {
         yawKiPlayerController.skipToPreviousSong()
-        updateUI(yawKiPlayerController.getCurrentSong())
+//        updateUI(yawKiPlayerController.getCurrentSong())
     }
 }

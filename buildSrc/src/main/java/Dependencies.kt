@@ -41,6 +41,7 @@ object Lib {
         // Test rules and transitive dependencies
         const val jUnitUITest = "androidx.compose.ui:ui-test-junit4:${Android.COMPOSE_VERSION}"
         const val uiTestManifest = "androidx.compose.ui:ui-test-manifest:${Android.COMPOSE_VERSION}"
+
         // mockito android
         const val mockitoAndroid = "org.mockito:mockito-android:5.12.0"
     }
@@ -64,7 +65,16 @@ object Lib {
         const val KTX_CORE = "androidx.core:core-ktx:${KTX_CORE_VERSION}"
         const val KT_STD = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${KOTLIN_VERSION}"
         const val COROUTINE_TEST = "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1"
+        const val KOTLIN_PARCELIZE = "kotlin-parcelize"
+    }
 
+    object Room {
+        const val room_version = "2.6.1"
+        const val ROOM_RUNTIME = "androidx.room:room-runtime:$room_version"
+        const val ROOM_COMPILER = "androidx.room:room-compiler:$room_version"
+        const val ROOM_PAGING = "androidx.room:room-paging:$room_version"
+        const val ROOM_KTX = "androidx.room:room-ktx:$room_version"
+//        testImplementation "androidx.room:room-testing:$room_version"
     }
 
     object Di {

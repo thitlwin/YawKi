@@ -8,6 +8,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.yawki.common.data.DataProvider
+import com.yawki.common.presentation.PlayerControllerUIEvent
+import com.yawki.common.presentation.PlayerUIEvent
 import com.yawki.common.presentation.PlayerUIState
 import com.yawki.common.utils.ContentDescriptions
 import com.yawki.common.utils.TestTags
@@ -27,6 +29,7 @@ class PlayerUIKtTest {
                 uiState = mockState,
                 monk = DataProvider.monks.first(),
                 onEvent = {},
+                onPlayerControllerEvent = {}
             )
         }
 
@@ -43,7 +46,8 @@ class PlayerUIKtTest {
             PlayerScreen(
                 uiState = mockState,
                 monk = DataProvider.monks.first(),
-                onEvent = {}
+                onEvent = {},
+                onPlayerControllerEvent = {}
             )
         }
 
@@ -59,6 +63,7 @@ class PlayerUIKtTest {
             PlayerScreen(
                 uiState = mockState,
                 monk = null,
+                onPlayerControllerEvent = {},
                 onEvent = {}
             )
         }
@@ -71,7 +76,10 @@ class PlayerUIKtTest {
         val song = DataProvider.songs.first()
 
         composeTestRule.setContent {
-            PlayerScreen(uiState = PlayerUIState(currentSong = song), monk = null) {
+            PlayerScreen(
+                uiState = PlayerUIState(currentSong = song),
+                monk = null,
+                onPlayerControllerEvent = {}) {
             }
         }
 
@@ -83,7 +91,7 @@ class PlayerUIKtTest {
         val song = DataProvider.songs.first()
         val monk = DataProvider.monks.first()
         composeTestRule.setContent {
-            PlayerScreen(uiState = PlayerUIState(currentSong = song), monk = monk) {
+            PlayerScreen(uiState = PlayerUIState(currentSong = song), monk = monk,onPlayerControllerEvent = {},) {
             }
         }
 
@@ -104,12 +112,12 @@ class PlayerUIKtTest {
                     currentSong = song
                 ),
                 monk = null,
-                onEvent = {
-                    if (it is PlayerUIEvent.ResumeSong || it is PlayerUIEvent.PauseSong) {
+                onPlayerControllerEvent = {
+                    if (it is PlayerControllerUIEvent.ResumeSong || it is PlayerControllerUIEvent.PauseSong) {
                         eventTriggered = true
                     }
                 }
-            )
+            ){}
         }
 
         // Find and click the play/pause button
@@ -129,12 +137,12 @@ class PlayerUIKtTest {
                     currentSong = song
                 ),
                 monk = null,
-                onEvent = {
-                    if (it is PlayerUIEvent.SkipToNextSong) {
+                onPlayerControllerEvent = {
+                    if (it is PlayerControllerUIEvent.SkipToNextSong) {
                         eventTriggered = true
                     }
                 }
-            )
+            ){}
         }
 
         composeTestRule.onNodeWithContentDescription(ContentDescriptions.SKIP_TO_NEXT_SONG)
@@ -153,12 +161,12 @@ class PlayerUIKtTest {
                     currentSong = song
                 ),
                 monk = null,
-                onEvent = {
-                    if (it is PlayerUIEvent.SkipToPreviousSong) {
+                onPlayerControllerEvent = {
+                    if (it is PlayerControllerUIEvent.SkipToPreviousSong) {
                         eventTriggered = true
                     }
                 }
-            )
+            ){}
         }
 
         composeTestRule.onNodeWithContentDescription(ContentDescriptions.SKIP_TO_PREVIOUS_SONG)
@@ -178,13 +186,13 @@ class PlayerUIKtTest {
                     currentSong = song
                 ),
                 monk = null,
-                onEvent = {
-                    if (it is PlayerUIEvent.SeekSongToPosition) {
+                onPlayerControllerEvent = {
+                    if (it is PlayerControllerUIEvent.SeekSongToPosition) {
                         triggerSkip10Seconds = true
                         triggerReplay10Seconds = true
                     }
                 }
-            )
+            ){}
         }
 
         composeTestRule.onNodeWithContentDescription(ContentDescriptions.SKIP_10_SECONDS)

@@ -1,7 +1,6 @@
 package com.yawki.player
 
 import com.yawki.common.data.DataProvider
-import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.song.Song
 import com.yawki.common.domain.usecases.GetCurrentSongPositionUseCase
 import com.yawki.common.domain.usecases.PauseSongUseCase
@@ -11,23 +10,22 @@ import com.yawki.common.domain.usecases.SeekSongToPositionUseCase
 import com.yawki.common.domain.usecases.SetMediaControllerCallbackUseCase
 import com.yawki.common.domain.usecases.SkipToNextSongUseCase
 import com.yawki.common.domain.usecases.SkipToPreviousSongUseCase
+import com.yawki.common.presentation.PlayerControllerUIEvent
+import com.yawki.common.presentation.SharedViewModel
 import com.yawki.navigator.ComposeNavigator
+import com.yawki.navigator.YawKiScreens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.Assert.*
 
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -63,7 +61,7 @@ class PlayerVMTest {
     @Mock
     private lateinit var composeNavigator: ComposeNavigator
 
-    private lateinit var playerVM: PlayerVM
+    private lateinit var sharedVM: SharedViewModel
     private val testDispatcher = StandardTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
@@ -72,7 +70,7 @@ class PlayerVMTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
-        playerVM = PlayerVM(
+        sharedVM = SharedViewModel(
             setMediaControllerCallbackUseCase,
             getCurrentMusicPositionUseCase,
             playSongUseCase,
@@ -95,16 +93,16 @@ class PlayerVMTest {
         // Arrange
         val updateUI: (Song?) -> Unit = {}
         // Test each event type
-        playerVM.onEvent(PlayerUIEvent.PauseSong)
+        sharedVM.onPlayerEvent(PlayerControllerUIEvent.PauseSong)
         advanceUntilIdle()
         verify(pauseSongUseCase).invoke()
 
-        playerVM.onEvent(PlayerUIEvent.ResumeSong)
+        sharedVM.onPlayerEvent(PlayerControllerUIEvent.ResumeSong)
         advanceUntilIdle()
         verify(resumeSongUseCase).invoke()
 
         val seekPosition = 100L
-        playerVM.onEvent(PlayerUIEvent.SeekSongToPosition(seekPosition))
+        sharedVM.onPlayerEvent(PlayerControllerUIEvent.SeekSongToPosition(seekPosition))
         advanceUntilIdle()
         verify(seekSongToPositionUseCase).invoke(seekPosition)
 
@@ -117,13 +115,13 @@ class PlayerVMTest {
 //        verify(skipToPreviousSongUseCase).invoke(updateUI)
 
         val mediaItemIndex = 5
-        playerVM.onEvent(PlayerUIEvent.PlaySong(mediaItemIndex))
+        sharedVM.onPlayerEvent(PlayerControllerUIEvent.PlaySong(mediaItemIndex))
         advanceUntilIdle()
         verify(playSongUseCase).invoke(mediaItemIndex)
 
-        playerVM.onEvent(PlayerUIEvent.OnBackPress)
+        sharedVM.onPlayerEvent(PlayerControllerUIEvent.OpenFullScreenPlayer)
         advanceUntilIdle()
-        verify(composeNavigator).navigateUp()
+        verify(composeNavigator).navigate(YawKiScreens.PlayerUIScreen.route)
     }
 
     @Test
@@ -136,7 +134,7 @@ class PlayerVMTest {
         `when`(playSongUseCase.invoke(mediaItemIndex)).thenAnswer {  } // You might want to return a Flow here if needed
 
         // Act
-        playerVM.onEvent(PlayerUIEvent.PlaySong(mediaItemIndex))
+        sharedVM.onPlayerEvent(PlayerControllerUIEvent.PlaySong(mediaItemIndex))
         advanceUntilIdle()
         // Assert
         // Verify that playSongUseCase was called
@@ -148,7 +146,7 @@ class PlayerVMTest {
         // Arrange
 
         // Act
-        playerVM.onEvent(PlayerUIEvent.PauseSong)
+        sharedVM.onPlayerEvent(PlayerControllerUIEvent.PauseSong)
         advanceUntilIdle()
 
         verify(pauseSongUseCase).invoke()

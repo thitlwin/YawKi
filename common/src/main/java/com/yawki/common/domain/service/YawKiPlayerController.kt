@@ -1,6 +1,7 @@
 package com.yawki.common.domain.service
 
 import com.yawki.common.domain.models.PlayerState
+import com.yawki.common.domain.models.monk.Monk
 import com.yawki.common.domain.models.song.Song
 
 interface YawKiPlayerController {
@@ -16,7 +17,7 @@ interface YawKiPlayerController {
     ) -> Unit
     )?
 
-    fun addMediaItems(songs: List<Song>)
+    fun addMediaItems(songs: List<Song>, monk: Monk)
 
     fun play(mediaItemIndex: Int)
 
@@ -35,4 +36,6 @@ interface YawKiPlayerController {
     fun getCurrentSong(): Song?
 
     fun seekTo(position: Long)
+
+    fun stop()
 }

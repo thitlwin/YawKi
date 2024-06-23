@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ListItemDivider() {
     Divider(
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 1.dp),
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
     )
 }

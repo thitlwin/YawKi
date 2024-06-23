@@ -7,18 +7,18 @@ import com.yawki.common.domain.models.song.Song
 object DataProvider {
     val songs: List<Song> = listOf(
         Song(
-            id = "1",
+            id = 1,
             name = "A lote pay tayar taw 1 A lote pay tayar taw ",
             serialNo = 1,
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://github.com/rafaelreis-hotmart/Audio-Sample-files/blob/master/sample.mp4",
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif"
         ),
         Song(
-            id = "2",
+            id = 2,
             name = "A lote pay tayar taw 2",
             serialNo = 2,
-            monk = "U Kyaw",
+            monkName = "U Kyaw",
             fileUrl = "https://github.com/rafaelreis-hotmart/Audio-Sample-files/blob/master/sample.mp4",
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif"
         )
@@ -69,164 +69,164 @@ object DataProvider {
     )
     val audioList = listOf(
         Song(
-            id = "1",
+            id = 1,
             name = "A lote pay tayar taw 1 A lote pay tayar taw ",
             serialNo = 1,
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://github.com/rafaelreis-hotmart/Audio-Sample-files/blob/master/sample.mp4",
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif"
         ),
         Song(
-            id = "2",
+            id = 2,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3",
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif"
 
         ),
         Song(
-            id = "3",
+            id = 3,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
-            monk = "U La",
+            monkName = "U La",
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "4",
+            id = 4,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "5",
+            id = 5,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "6",
+            id = 6,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "7",
+            id = 7,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "8",
+            id = 8,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "9",
+            id = 9,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "10",
+            id = 10,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "11",
+            id = 11,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "12",
+            id = 12,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "13",
+            id = 13,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "14",
+            id = 14,
             name = "၁။ အဘိဓမ္မာမြတ်ဒေသနာ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "15",
+            id = 15,
             name = "၃။ အဘိဓမ္မာ သင်တန်းဆင်း သြဝါဒ",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "16",
+            id = 16,
             name = "၁။ ၂၇-၃-၂၀၀၉ စိတ်ကိုအာရုံနှင့် လေ့ကျင့်ခြင်း",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "17",
+            id = 17,
             name = "၁။ ၂၅-၈-၂၀၀၈ စိတ်ကိုလေ့လာသုံးသပ်ခြင်း",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "18",
+            id = 18,
             name = "အဘိဓမ္မာနှင့် ဝိပဿနာ တရားတော် ၁၉-၂-၂၀၀၉",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "19",
+            id = 19,
             name = "အဘိဓမ္မာသင်ယူခြင်း အကျိုး ကျေးဇူး တရားတော်",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
         Song(
-            id = "20",
+            id = 20,
             name = "၇။ အဘိဓမ္မာနှင့် ဝိပဿနာ ဓမ္မဗျူဟာ (ပဲခူး)",
             serialNo = 2,
             artworkUri = "https://www.dhammadownload.com/images/Dr-Nandamalabhivamsa.gif",
-            monk = "U La",
+            monkName = "U La",
             fileUrl = "https://dhammadownload.com/MP3Library/Dr-Nandamalabhivamsa/MP3Disc02/001-Dr-Nandamalabhivamsa-MP3-2-ABiDaMarMyatDayThaNar.mp3"
         ),
 

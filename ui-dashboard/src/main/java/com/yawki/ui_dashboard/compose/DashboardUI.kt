@@ -1,11 +1,14 @@
 package com.yawki.ui_dashboard.compose
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -20,6 +23,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,10 +36,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.presentation.SharedViewModel
 import com.yawki.common_ui.theme.YawKiTheme
 import com.yawki.common_ui.theme.YawKiTypography
-import com.yawki.navigator.ComposeNavigator
+import com.yawki.common_ui.components.PlayerBottomBar
 import com.yawki.ui_dashboard.R
 import com.yawki.ui_dashboard.screens.home.HomeScreenUI
 import com.yawki.ui_dashboard.screens.favorite.PlaylistScreenUI
@@ -47,13 +52,11 @@ fun DashboardUI(
 ) {
     val scaffoldState = rememberScaffoldState()
     val dashboardNavController = rememberNavController()
-    YawKiTheme {
-        DashboardScreen(
-            scaffoldState,
-            dashboardNavController,
-            sharedViewModel
-        )
-    }
+    DashboardScreen(
+        scaffoldState,
+        dashboardNavController,
+        sharedViewModel
+    )
 }
 
 @Composable
@@ -82,7 +85,17 @@ private fun DashboardScaffold(
                 .navigationBarsPadding(),
             scaffoldState = scaffoldState,
             bottomBar = {
-                DashboardBottomNavBar(dashboardNavController)
+                val playerUIState = sharedViewModel.playerUiStateFlow.collectAsState().value
+                Log.d("TAG", "DashboardScaffold: ${playerUIState.currentSong}")
+                Column(modifier = Modifier.wrapContentHeight()) {
+                    PlayerBottomBar(
+                        modifier = Modifier,
+                        onEvent = sharedViewModel::onPlayerEvent,
+                        playerState = playerUIState.playerState ?: PlayerState.STOPPED,
+                        song = playerUIState.currentSong
+                    )
+                    DashboardBottomNavBar(dashboardNavController)
+                }
             },
             snackbarHost = {
                 scaffoldState.snackbarHostState

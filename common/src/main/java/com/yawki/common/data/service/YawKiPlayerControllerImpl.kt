@@ -15,14 +15,16 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.yawki.common.R
 import com.yawki.common.domain.models.PlayerState
+import com.yawki.common.domain.models.monk.Monk
 import com.yawki.common.domain.models.song.Song
 import com.yawki.common.domain.models.song.toSong
 import com.yawki.common.domain.service.YawKiPlayerController
+import com.yawki.common.utils.getDefaultArtWork
 import java.io.ByteArrayOutputStream
 
 const val TAG = "YawKiPlayerCtrImpl-->"
 
-class YawKiPlayerControllerImpl(val context: Context) : YawKiPlayerController {
+class YawKiPlayerControllerImpl(private val context: Context) : YawKiPlayerController {
 
     private var mediaControllerFuture: ListenableFuture<MediaController>
     private val mediaController: MediaController?
@@ -78,23 +80,23 @@ class YawKiPlayerControllerImpl(val context: Context) : YawKiPlayerController {
             else -> if (isPlaying) PlayerState.PLAYING else PlayerState.PAUSED
         }
 
-    override fun addMediaItems(songs: List<Song>) {
+    override fun addMediaItems(songs: List<Song>, monk: Monk) {
         val mediaItems = songs.map {
-            Log.d("TAG", "-----it.songUrl=>${it.fileUrl}")
             MediaItem.Builder()
-                .setMediaId(it.fileUrl)
+                .setMediaId(it.fileUrl) // this should be the uri of the file
                 .setUri(it.fileUrl)
                 .setMediaMetadata(
                     MediaMetadata.Builder()
+                        .setTrackNumber(it.id)
                         .setTitle(it.name)
-                        .setSubtitle(it.monk)
-                        .setArtist(it.monk)
+                        .setSubtitle(monk.name)
+                        .setArtist(monk.name)
                         .apply {
                             if (it.artworkUri.isNotEmpty())
                                 setArtworkUri(Uri.parse(it.artworkUri))
                             else {
                                 setArtworkData(
-                                    getDefaultArtWork(),
+                                    getDefaultArtWork(context),
                                     MediaMetadata.PICTURE_TYPE_FRONT_COVER
                                 )
                             }
@@ -103,21 +105,7 @@ class YawKiPlayerControllerImpl(val context: Context) : YawKiPlayerController {
                 )
                 .build()
         }
-        Log.d(TAG, "addMediaItems-->$mediaItems")
-        Log.d(TAG, "addMediaItems last-->${mediaItems.last().mediaId}")
-        Log.d(TAG, "addMediaItems last mediaMetadata-->${mediaItems.last().mediaMetadata}")
-
         mediaController?.setMediaItems(mediaItems)
-
-        Log.d(TAG, "addMediaItems count-->${mediaController?.mediaItemCount}")
-
-    }
-
-    private fun getDefaultArtWork(): ByteArray {
-        val bitmap = BitmapFactory.decodeResource(context.resources, R.drawable.little_monk)
-        val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream)
-        return outputStream.toByteArray()
     }
 
     override fun play(mediaItemIndex: Int) {
@@ -150,6 +138,10 @@ class YawKiPlayerControllerImpl(val context: Context) : YawKiPlayerController {
 
     override fun seekTo(position: Long) {
         mediaController?.seekTo(position)
+    }
+
+    override fun stop() {
+        mediaController?.stop()
     }
 
     override fun destroy() {

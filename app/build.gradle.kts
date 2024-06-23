@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":navigator"))
     implementation(project(":common"))
     implementation(project(":common_ui"))
+    implementation(project(":features:player"))
 
 
 //    Hilt

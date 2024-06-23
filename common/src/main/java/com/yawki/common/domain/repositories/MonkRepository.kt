@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface MonkRepository {
     fun getMonkList(): Flow<SafeResult<List<Monk>>>
+    suspend fun getMonkById(monkId: Int): Monk
 
 }

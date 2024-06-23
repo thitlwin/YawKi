@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var composeNavigator: ComposeNavigator
     private val sharedViewModel: SharedViewModel by viewModels()
+
     @Inject
     lateinit var destroyMediaControllerUseCase: DestroyMediaControllerUseCase
 

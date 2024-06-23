@@ -3,6 +3,7 @@ plugins {
     id(BuildPlugins.KOTLIN_ANDROID_PLUGIN)
     id(BuildPlugins.KOTLIN_KAPT)
     id(BuildPlugins.DAGGER_HILT_PLUGIN)
+    id(Lib.Kotlin.KOTLIN_PARCELIZE)
 }
 
 android {
@@ -35,6 +36,17 @@ android {
 }
 
 dependencies {
+    implementation(project(":navigator"))
+
+    // ROOM
+    implementation(Lib.Room.ROOM_RUNTIME)
+    annotationProcessor(Lib.Room.ROOM_COMPILER)
+    kapt(Lib.Room.ROOM_COMPILER)
+    implementation(Lib.Room.ROOM_PAGING)
+    implementation(Lib.Room.ROOM_KTX)
+
+    // optional - Test helpers
+//        testImplementation "androidx.room:room-testing:$room_version"
 
 // Firebase
     implementation(platform(Lib.Firebase.FIREBASE_BOM))
@@ -55,6 +67,7 @@ dependencies {
     implementation(Lib.Android.LIFECYCLE_RUNTIME)
 
     // For Unit Testing
+    testImplementation(Lib.UnitTesting.mockitoCore)
     testImplementation(Lib.UnitTesting.mockk)
     testImplementation(Lib.UnitTesting.jUnit4)
     testImplementation(Lib.UnitTesting.assertjCore)

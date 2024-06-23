@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yawki.common.domain.SafeResult
 import com.yawki.common.domain.usecases.GetMonksUseCase
+import com.yawki.common.utils.KEY_ARGS
 import com.yawki.navigator.ComposeNavigator
 import com.yawki.navigator.YawKiScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,7 +58,7 @@ class HomeScreenVM @Inject constructor(
         when (event) {
             HomeScreenUIEvent.FetchMonk -> fetchMonks()
             is HomeScreenUIEvent.OnMonkSelected -> {
-                composeNavigator.navigate(YawKiScreens.AudioListUIScreen.route)
+                composeNavigator.navigate("${YawKiScreens.AudioListUIScreen.route}/${event.selectedMonk.id}")
             }
         }
     }

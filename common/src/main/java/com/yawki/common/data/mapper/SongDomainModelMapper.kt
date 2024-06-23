@@ -7,17 +7,17 @@ import javax.inject.Inject
 class SongDomainModelMapper @Inject constructor() : DomainModelMapper<SongDto, Song> {
     override fun mapToDomain(dtoModel: SongDto): Song {
         return Song(
-            id = dtoModel.id.toString(),
+            id = dtoModel.id,
             name = dtoModel.name,
             serialNo = dtoModel.serialNo,
-            monk = dtoModel.monk,
+            monkName = dtoModel.monk,
             fileUrl = dtoModel.fileUrl,
             artworkUri = dtoModel.artworkUri)
     }
 
     override fun mapToDto(domainModel: Song): SongDto {
         return SongDto(
-            id = domainModel.id.toInt(),
+            id = domainModel.id,
             name = domainModel.name,
             serialNo = domainModel.serialNo,
             monkId = 0,

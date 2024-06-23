@@ -1,9 +1,12 @@
 package com.yawki.audiolist
 
+import androidx.lifecycle.SavedStateHandle
 import com.yawki.common.data.DataProvider
 import com.yawki.common.domain.SafeResult
 import com.yawki.common.domain.usecases.AddMediaItemsUseCase
+import com.yawki.common.domain.usecases.GetMonkUseCase
 import com.yawki.common.domain.usecases.GetSongsUseCase
+import com.yawki.common.domain.usecases.UpdateSongUseCase
 import com.yawki.navigator.ComposeNavigator
 import com.yawki.navigator.YawKiScreens
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +38,12 @@ class AudioListVMTest {
     private lateinit var getSongsUseCase: GetSongsUseCase
 
     @Mock
+    private lateinit var updateSongUseCase: UpdateSongUseCase
+
+    @Mock
+    private lateinit var getMonkUseCase: GetMonkUseCase
+
+    @Mock
     private lateinit var addMediaItemsUseCase: AddMediaItemsUseCase
 
     private lateinit var audioListVM: AudioListVM
@@ -44,7 +53,15 @@ class AudioListVMTest {
     fun setUp() {
         MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
-        audioListVM = AudioListVM(composeNavigator, getSongsUseCase, addMediaItemsUseCase)
+        audioListVM =
+            AudioListVM(
+                composeNavigator,
+                getSongsUseCase,
+                getMonkUseCase,
+                addMediaItemsUseCase,
+                updateSongUseCase,
+                SavedStateHandle()
+            )
     }
 
     @After
@@ -55,14 +72,14 @@ class AudioListVMTest {
     @Test
     fun `fetchAudios updates state to loading and then success`() = runTest {
         // Arrange
-        val monkId = 1
-        `when`(getSongsUseCase.invoke(monkId)).thenReturn(flow {
+        val monk = DataProvider.monks.first()
+        `when`(getSongsUseCase.invoke(monk)).thenReturn(flow {
             emit(SafeResult.Loading)
             emit(SafeResult.Success(DataProvider.songs))
         })
 
         // Act
-        audioListVM.onEvent(AudioListUIEvent.FetchSong(monkId))
+        audioListVM.onEvent(AudioListUIEvent.FetchSong(monk))
 
         // Assert
         // Verify loading state
@@ -74,21 +91,21 @@ class AudioListVMTest {
         // Verify success state
         assertFalse(audioListVM.audioListScreenUIState.loading)
         assertEquals(DataProvider.songs, audioListVM.audioListScreenUIState.songs)
-        verify(addMediaItemsUseCase).invoke(DataProvider.songs)
+        verify(addMediaItemsUseCase).invoke(DataProvider.songs, monk)
     }
 
     @Test
     fun `fetchAudios updates state to loading and then error`() = runTest {
         // Arrange
-        val monkId = 1
+        val monk = DataProvider.monks.first()
         val exception = Exception("Test Exception")
-        `when`(getSongsUseCase.invoke(monkId)).thenReturn(flow {
+        `when`(getSongsUseCase.invoke(monk)).thenReturn(flow {
             emit(SafeResult.Loading)
             emit(SafeResult.Error(exception))
         })
 
         // Act
-        audioListVM.onEvent(AudioListUIEvent.FetchSong(monkId))
+        audioListVM.onEvent(AudioListUIEvent.FetchSong(monk))
 
         // Assert
         // Verify loading state

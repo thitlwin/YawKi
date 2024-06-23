@@ -1,6 +1,5 @@
 package com.yawki.ui_dashboard.screens.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -76,8 +75,8 @@ fun MonkGridView(
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background),
+            .fillMaxWidth(),
+//            .background(MaterialTheme.colorScheme.background),
         contentPadding = PaddingValues(bottom = 60.dp)
     ) {
         items(monks) { monk ->

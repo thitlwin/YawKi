@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.yawki.common.data.DataProvider
+import com.yawki.common.presentation.PlayerUIState
 import com.yawki.common.utils.ContentDescriptions
 import com.yawki.common.utils.TestTags
 import org.junit.Rule
@@ -27,7 +28,9 @@ class AudioListUIKtTest {
                 selectedMonk = DataProvider.monks.first(),
                 onEvent = {},
                 onSongClick = {},
-                modifier = Modifier
+                modifier = Modifier,
+                playerUIState = PlayerUIState(),
+                onPlayerEvent = {}
             )
         }
         // Assert: Verify that the loading state is displayed
@@ -44,7 +47,9 @@ class AudioListUIKtTest {
                 selectedMonk = DataProvider.monks.first(),
                 onSongClick = {},
                 onEvent = {},
-                modifier = Modifier
+                modifier = Modifier,
+                playerUIState = PlayerUIState(),
+                onPlayerEvent = {}
             )
         }
 
@@ -60,7 +65,9 @@ class AudioListUIKtTest {
                 modifier = Modifier,
                 selectedMonk = DataProvider.monks.first(),
                 onSongClick = {},
-                onEvent = {})
+                onEvent = {},
+                playerUIState = PlayerUIState(),
+                onPlayerEvent = {})
         }
 
         composeTestRule.onNodeWithTag(TestTags.EMPTY_VIEW_TAG).assertIsDisplayed()
@@ -75,7 +82,9 @@ class AudioListUIKtTest {
                 modifier = Modifier,
                 selectedMonk = DataProvider.monks.first(),
                 onEvent = {},
-                onSongClick = {})
+                onSongClick = {},
+                playerUIState = PlayerUIState(),
+                onPlayerEvent = {})
         }
         composeTestRule.onNodeWithText(DataProvider.songs[0].name).assertIsDisplayed()
         composeTestRule.onNodeWithText(DataProvider.songs[1].name).assertIsDisplayed()
@@ -92,12 +101,15 @@ class AudioListUIKtTest {
                 modifier = Modifier,
                 selectedMonk = DataProvider.monks.first(),
                 onSongClick = { songClicked = true },
+                playerUIState = PlayerUIState(),
+                onPlayerEvent = {},
                 onEvent = {
                     when (it) {
                         is AudioListUIEvent.FetchSong -> {}
                         AudioListUIEvent.OnBackPress -> {
                             backPressed = true
                         }
+
                         is AudioListUIEvent.OnFavoriteIconClick -> {}
                         is AudioListUIEvent.OnSongClick -> {
                             songClicked = true
