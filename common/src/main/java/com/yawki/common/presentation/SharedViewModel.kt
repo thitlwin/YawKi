@@ -20,7 +20,6 @@ import com.yawki.navigator.YawKiScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,12 +45,6 @@ class SharedViewModel @Inject constructor(
         setMediaControllerCallback()
     }
 
-
-//    fun setAlreadyLunchedFlag() {
-//        savedStateHandle["alreadyLunched"] = true
-//    }
-//    val alreadyLunched: StateFlow<Boolean> = savedStateHandle.getStateFlow("alreadyLunched", false)
-
     fun onPlayerEvent(event: PlayerControllerUIEvent) {
         when (event) {
             PlayerControllerUIEvent.PauseSong -> pauseSong()
@@ -66,8 +59,10 @@ class SharedViewModel @Inject constructor(
     }
 
     private fun playSong(mediaItemIndex: Int) {
-        playSongUseCase(mediaItemIndex)
-        _playerUiStateFlow.value = _playerUiStateFlow.value.copy(isPlaying = true)
+        viewModelScope.launch {
+            playSongUseCase.invoke(mediaItemIndex)
+            _playerUiStateFlow.value = _playerUiStateFlow.value.copy(isPlaying = true)
+        }
     }
 
     private fun skipPreviousSong() {
@@ -81,14 +76,17 @@ class SharedViewModel @Inject constructor(
     }
 
     private fun updateCurrentSong() {
-        val currentSong = yawKiPlayerController.getCurrentSong()
-        currentSong?.apply { isPlaying = true }
-        _playerUiStateFlow.value = _playerUiStateFlow.value.copy(currentSong = currentSong)
+        viewModelScope.launch {
+            val currentSong = yawKiPlayerController.getCurrentSong()?.copy(isPlaying = true)
+            _playerUiStateFlow.value = _playerUiStateFlow.value.copy(currentSong = currentSong)
+        }
     }
 
     private fun seekSongPosition(position: Long) {
-        seekSongToPositionUseCase(position)
-        _playerUiStateFlow.value = _playerUiStateFlow.value.copy(currentPosition = position)
+        viewModelScope.launch {
+            seekSongToPositionUseCase(position)
+            _playerUiStateFlow.value = _playerUiStateFlow.value.copy(currentPosition = position)
+        }
     }
 
     private fun resumeSong() {
@@ -97,13 +95,16 @@ class SharedViewModel @Inject constructor(
     }
 
     private fun pauseSong() {
-        pauseSongUseCase.invoke()
-        _playerUiStateFlow.value = _playerUiStateFlow.value.copy(isPlaying = false)
+        viewModelScope.launch {
+            pauseSongUseCase.invoke()
+            _playerUiStateFlow.value = _playerUiStateFlow.value.copy(isPlaying = false)
+        }
     }
 
     private fun closePlayer() {
         closeThePlayerUseCase.invoke()
-        _playerUiStateFlow.value = _playerUiStateFlow.value.copy(currentSong = null, isPlaying = false)
+        _playerUiStateFlow.value =
+            _playerUiStateFlow.value.copy(currentSong = null, isPlaying = false)
     }
 
     private fun openFullScreenPlayer() {

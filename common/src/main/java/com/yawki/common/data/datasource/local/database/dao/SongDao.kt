@@ -14,6 +14,7 @@ interface SongDao {
 
     @Query("SELECT * FROM songs WHERE songs.monk_id = :monkId ORDER BY songs.id ASC")
     fun getSongs(monkId: Int): Flow<List<SongEntity>>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSongs(songs: List<SongEntity>)
 
@@ -25,4 +26,16 @@ interface SongDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(song: SongEntity)
+
+    @Query("UPDATE songs SET current_position = :currentPosition WHERE id = :songID")
+    suspend fun updateCurrentPosition(songID: Int, currentPosition: Long)
+
+    @Query("UPDATE songs SET is_playing=1 WHERE id = :songID")
+    suspend fun setCurrentSongAsPlayed(songID: Int)
+
+    @Query("UPDATE songs SET is_playing=0 WHERE 1")
+    suspend fun resetAllSongsAsNotPlayed()
+
+    @Query("SELECT * FROM songs WHERE id = :id")
+    suspend fun getSong(id: Int): SongEntity
 }

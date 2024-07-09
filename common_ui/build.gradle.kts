@@ -1,6 +1,7 @@
 plugins {
     id(BuildPlugins.ANDROID_LIBRARY_PLUGIN)
     id(BuildPlugins.KOTLIN_ANDROID_PLUGIN)
+//    id(BuildPlugins.GOOGLE_SERVICE)
 }
 
 android {
@@ -53,6 +54,13 @@ dependencies {
     implementation(project(":navigator"))
     implementation(project(":common"))
 //    api(Lib.Android.GOOGLE_MATERIAL)
+
+    // for firebase auth ui
+    implementation(Lib.Firebase.FIREBASE_AUTHENTICATION)
+    implementation("com.firebaseui:firebase-ui-auth:7.2.0")
+    implementation("androidx.activity:activity-compose:1.9.0")
+    // For Google Authentication
+//    implementation(Lib.Firebase.GOOGLE_SERVICE_AUTH)
 
     debugImplementation(Lib.Android.COMPOSE_UI_TOOLING)
 }

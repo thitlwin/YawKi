@@ -57,7 +57,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yawki.common.data.DataProvider
 import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.monk.Monk
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3.Song
 import com.yawki.common.presentation.PlayerControllerUIEvent
 import com.yawki.common.presentation.PlayerUIEvent
 import com.yawki.common.presentation.PlayerUIState
@@ -77,14 +77,6 @@ fun PlayerUI(
     val playerVM: PlayerVM = hiltViewModel()
     val state = sharedViewModel.playerUiStateFlow.collectAsState().value
     val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
-//    val selectedSongIndex = sharedViewModel.selectedSongIndexFlow.collectAsState().value ?: 0
-//    Log.d("TAG", "PlayerUI: selectedSongIndex = $selectedSongIndex")
-//    if (!state.isPlaying) {
-//        LaunchedEffect(key1 = Unit) {
-//            Log.d("TAG", "PlayerUI: launch playsong = $selectedSongIndex")
-//            sharedViewModel.onPlayerEvent(PlayerControllerUIEvent.PlaySong(selectedSongIndex))
-//        }
-//    }
 
     PlayerScreen(
         uiState = state,
@@ -94,7 +86,6 @@ fun PlayerUI(
         },
         onEvent = {
             playerVM.onEvent(it)
-//            sharedViewModel.updatePlayerUIState(playerVM.uiState.value)
         }
     )
 }

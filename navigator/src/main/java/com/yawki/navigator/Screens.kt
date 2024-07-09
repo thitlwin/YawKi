@@ -27,6 +27,8 @@ sealed class YawKiScreens(
     )
 
     data object PlayerUIScreen : YawKiScreens("PlayerUIScreen")
+
+    data object AuthUIScreen : YawKiScreens("AuthUIScreen")
 }
 
 sealed class YawKiRoute(val name: String) {

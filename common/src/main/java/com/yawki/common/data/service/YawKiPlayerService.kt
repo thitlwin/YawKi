@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class YawKiPlayerService : MediaSessionService() {
-    val TAG= "-PlayerService-"
+    val TAG = "-PlayerService-"
     private var mediaSession: MediaSession? = null
 
     @Inject
@@ -20,7 +20,6 @@ class YawKiPlayerService : MediaSessionService() {
 
     override fun onCreate() {
         super.onCreate()
-Log.d(TAG, "creating YawKiPlayerService------")
         mediaSession = MediaSession.Builder(this, exoPlayer)
             .setCallback(MediaSessionCallback())
             .build()
@@ -34,7 +33,6 @@ Log.d(TAG, "creating YawKiPlayerService------")
             release()
             mediaSession = null
         }
-
         super.onDestroy()
     }
 
@@ -46,17 +44,10 @@ Log.d(TAG, "creating YawKiPlayerService------")
         ): ListenableFuture<MutableList<MediaItem>> {
             try {
                 val updatedMediaItems = mediaItems.map {
-                    Log.d(TAG, "onAddMediaItems ----map=${it.mediaId}")
                     it.buildUpon().setUri(it.mediaId).build()
                 }.toMutableList()
-                // to deelte
-                updatedMediaItems.map {
-                    Log.d(TAG, "onAddMediaItems ----updatedMediaItems=${it.mediaId}")
-                }
-
                 return Futures.immediateFuture(updatedMediaItems)
             } catch (e: Exception) {
-                Log.d(TAG, "onAddMediaItems ----exception=${e.message}")
                 e.printStackTrace()
             }
             return Futures.immediateCancelledFuture()

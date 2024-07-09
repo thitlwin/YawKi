@@ -3,6 +3,7 @@ package com.yawki.common.di
 import android.content.Context
 import androidx.room.Room
 import com.yawki.common.data.datasource.local.database.YawkiDatabase
+import com.yawki.common.data.datasource.local.database.dao.FolderDao
 import com.yawki.common.data.datasource.local.database.dao.MonkDao
 import com.yawki.common.data.datasource.local.database.dao.SongDao
 import dagger.Module
@@ -33,4 +34,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideMonkDao(yawkiDatabase: YawkiDatabase): MonkDao = yawkiDatabase.monkDao()
+
+    @Provides
+    @Singleton
+    fun provideFolderDao(yawkiDatabase: YawkiDatabase): FolderDao = yawkiDatabase.folderDao()
 }

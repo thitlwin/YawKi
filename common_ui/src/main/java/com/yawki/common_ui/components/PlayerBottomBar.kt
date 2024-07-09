@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.yawki.common.data.DataProvider
 import com.yawki.common.domain.models.PlayerState
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3.Song
 import com.yawki.common.presentation.PlayerControllerUIEvent
 import com.yawki.common.utils.ContentDescriptions
 import com.yawki.common_ui.R

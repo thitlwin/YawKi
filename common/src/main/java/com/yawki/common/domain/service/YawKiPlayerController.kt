@@ -2,7 +2,7 @@ package com.yawki.common.domain.service
 
 import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.monk.Monk
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3.Song
 
 interface YawKiPlayerController {
 
@@ -33,7 +33,7 @@ interface YawKiPlayerController {
 
     fun skipToPreviousSong()
 
-    fun getCurrentSong(): Song?
+    suspend fun getCurrentSong(): Song?
 
     fun seekTo(position: Long)
 

@@ -2,7 +2,7 @@ package com.yawki.common.data
 
 import com.yawki.common.data.models.MonkDto
 import com.yawki.common.domain.models.monk.Monk
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3.Song
 
 object DataProvider {
     val songs: List<Song> = listOf(

@@ -1,9 +1,10 @@
 package com.yawki.common.di
 
 import android.content.Context
+import com.yawki.common.data.datasource.local.database.dao.SongDao
+import com.yawki.common.data.mapper.SongEntityMapper
 import com.yawki.common.data.service.YawKiPlayerControllerImpl
 import com.yawki.common.domain.service.YawKiPlayerController
-import com.yawki.common.presentation.EventBus
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,10 +17,10 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideYawKiPlayerController(@ApplicationContext context: Context): YawKiPlayerController =
-        YawKiPlayerControllerImpl(context)
-
-    @Singleton
-    @Provides
-    fun provideEventBus(): EventBus = EventBus()
+    fun provideYawKiPlayerController(
+        @ApplicationContext context: Context,
+        songDao: SongDao,
+        songEntityMapper: SongEntityMapper
+    ): YawKiPlayerController =
+        YawKiPlayerControllerImpl(context, songDao, songEntityMapper)
 }

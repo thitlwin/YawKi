@@ -2,8 +2,6 @@ package com.yawki.common.data.service
 
 import android.content.ComponentName
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.media3.common.MediaItem
@@ -13,18 +11,23 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import com.yawki.common.R
+import com.yawki.common.data.datasource.local.database.dao.SongDao
+import com.yawki.common.data.mapper.SongDomainModelMapper
+import com.yawki.common.data.mapper.SongEntityMapper
 import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.monk.Monk
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3.Song
 import com.yawki.common.domain.models.song.toSong
 import com.yawki.common.domain.service.YawKiPlayerController
 import com.yawki.common.utils.getDefaultArtWork
-import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.coroutineScope
 
 const val TAG = "YawKiPlayerCtrImpl-->"
 
-class YawKiPlayerControllerImpl(private val context: Context) : YawKiPlayerController {
+class YawKiPlayerControllerImpl(private val context: Context,
+    private val songDao: SongDao,
+    private val songEntityMapper: SongEntityMapper
+) : YawKiPlayerController {
 
     private var mediaControllerFuture: ListenableFuture<MediaController>
     private val mediaController: MediaController?
@@ -83,7 +86,7 @@ class YawKiPlayerControllerImpl(private val context: Context) : YawKiPlayerContr
     override fun addMediaItems(songs: List<Song>, monk: Monk) {
         val mediaItems = songs.map {
             MediaItem.Builder()
-                .setMediaId(it.fileUrl) // this should be the uri of the file
+                .setMediaId(it.fileUrl) // this must be the uri of the file
                 .setUri(it.fileUrl)
                 .setMediaMetadata(
                     MediaMetadata.Builder()
@@ -134,7 +137,17 @@ class YawKiPlayerControllerImpl(private val context: Context) : YawKiPlayerContr
 
     override fun getCurrentPosition(): Long = mediaController?.currentPosition ?: 0L
 
-    override fun getCurrentSong(): Song? = mediaController?.currentMediaItem?.toSong()
+    override suspend fun getCurrentSong(): Song {
+        return coroutineScope{
+            // since the index from media playlist can not be match with the list index, we need to get the song from db
+            val currentPlayingSong = mediaController?.currentMediaItem
+            val songId = currentPlayingSong?.mediaMetadata?.trackNumber // set id to trackNumber since there is not place to tag the song id
+//            val song = mediaController?.currentMediaItem?.toSong()
+            val dbSong = songDao.getSong(songId ?: 0)
+//            val fullInfoSong = song?.copy(isPlaying = dbSong.isPlaying, isFavorite = dbSong.isFavorite, currentPosition = dbSong.currentPosition)
+            return@coroutineScope songEntityMapper.mapToDomain(dbSong)
+        }
+    }
 
     override fun seekTo(position: Long) {
         mediaController?.seekTo(position)

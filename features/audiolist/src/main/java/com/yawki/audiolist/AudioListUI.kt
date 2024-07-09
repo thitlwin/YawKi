@@ -22,10 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,10 +38,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.yawki.common.data.DataProvider
 import com.yawki.common.domain.models.PlayerState
 import com.yawki.common.domain.models.monk.Monk
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3
+import com.yawki.common.domain.models.song.Mp3.Song
 import com.yawki.common.presentation.PlayerControllerUIEvent
 import com.yawki.common.presentation.PlayerUIState
 import com.yawki.common.presentation.SharedViewModel
+import com.yawki.common.presentation.auth.AuthUIEvent
+import com.yawki.common.presentation.auth.AuthUiState
+import com.yawki.common.presentation.auth.AuthViewModel
 import com.yawki.common.utils.TestTag
 import com.yawki.common_ui.components.EmptyView
 import com.yawki.common_ui.components.ErrorView
@@ -52,25 +53,21 @@ import com.yawki.common_ui.components.ListItemDivider
 import com.yawki.common_ui.components.LoadingView
 import com.yawki.common_ui.components.PlayerBottomBar
 import com.yawki.common_ui.components.SecondaryTopApBar
+import com.yawki.navigator.ComposeNavigator
+import com.yawki.navigator.YawKiScreens
 
 @Composable
 fun AudioListUI(
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    composeNavigator: ComposeNavigator
 ) {
     Log.d("TAG", "AudioListUI: building........")
+    val authViewModel: AuthViewModel = hiltViewModel()
     val audioListVM: AudioListVM = hiltViewModel()
     val state = audioListVM.audioListScreenUIState
     val playerUIState = sharedViewModel.playerUiStateFlow.collectAsState().value
     val selectedMonk = sharedViewModel.selectedMonkFlow.collectAsState().value
-//    val isInitialized = rememberSaveable { mutableStateOf(false) }
-//    if (!isInitialized.value) {
-//        LaunchedEffect(key1 = selectedMonk) {
-//            if (selectedMonk != null) {
-//                audioListVM.onEvent(AudioListUIEvent.FetchSong(selectedMonk))
-//                isInitialized.value = true
-//            }
-//        }
-//    }
+    val authUiState = authViewModel.uiState.collectAsState().value
 
     AudioListScreen(
         modifier = Modifier.fillMaxWidth(),
@@ -78,17 +75,21 @@ fun AudioListUI(
         selectedMonk = selectedMonk!!,
         onEvent = audioListVM::onEvent,
         playerUIState = playerUIState,
+        authUiState = authUiState,
         onPlayerEvent = sharedViewModel::onPlayerEvent,
         onSongClick = { selectedSong ->
             audioListVM.onEvent(AudioListUIEvent.OnSongClick(selectedSong))
-            state.songs?.indexOf(selectedSong).let { songIndex ->
-                songIndex?.let {
-                    if (selectedSong.isPlaying)
-                        sharedViewModel.onPlayerEvent(PlayerControllerUIEvent.PlaySong(it))
-                    else
-                        sharedViewModel.onPlayerEvent(PlayerControllerUIEvent.PauseSong)
+            if (selectedSong.isPlaying)
+                sharedViewModel.onPlayerEvent(PlayerControllerUIEvent.PauseSong)
+            else {
+                state.songs?.filterIsInstance<Song>()?.indexOf(selectedSong)?.let {
+                    sharedViewModel.onPlayerEvent(PlayerControllerUIEvent.PlaySong(it))
                 }
             }
+        },
+        onSignIn = {
+            authViewModel.onEvent(AuthUIEvent.SignInAnonymously)
+            composeNavigator.navigate(YawKiScreens.AuthUIScreen.route)
         }
     )
 }
@@ -99,13 +100,15 @@ fun AudioListScreen(
     state: AudioListUIState,
     selectedMonk: Monk,
     playerUIState: PlayerUIState,
+    authUiState: AuthUiState,
     onPlayerEvent: (PlayerControllerUIEvent) -> Unit,
     onEvent: (AudioListUIEvent) -> Unit,
     onSongClick: (Song) -> Unit,
+    onSignIn: () -> Unit,
 ) {
     Scaffold(
         topBar = {
-            SecondaryTopApBar(title = stringResource(id = R.string.mp3)) {
+            SecondaryTopApBar(title = selectedMonk.name) {
                 onEvent(AudioListUIEvent.OnBackPress)
             }
         },
@@ -136,9 +139,15 @@ fun AudioListScreen(
                             selectedMonk = selectedMonk,
                             songList = state.songs,
                             onFavoriteIconClick = {
-                                onEvent(AudioListUIEvent.OnFavoriteIconClick(it))
+                                if (authUiState.isAuthenticated)
+                                    onEvent(AudioListUIEvent.OnFavoriteIconClick(it))
+                                else
+                                    onSignIn.invoke()
                             },
-                            onSongClick = onSongClick
+                            onSongClick = onSongClick,
+                            onFolderClick = {
+//                                onEvent(AudioListUIEvent.OnFolderClick(it))
+                            }
                         )
                     }
                 }
@@ -150,9 +159,10 @@ fun AudioListScreen(
 @Composable
 fun AudioList(
     selectedMonk: Monk,
-    songList: List<Song>?,
+    songList: List<Mp3>?,
     onFavoriteIconClick: (audio: Song) -> Unit,
-    onSongClick: (Song) -> Unit
+    onSongClick: (Song) -> Unit,
+    onFolderClick: (Mp3.SongFolder) -> Unit
 ) {
     if (songList.isNullOrEmpty()) {
         return EmptyView(stringResource(id = R.string.empty_audio))
@@ -160,15 +170,62 @@ fun AudioList(
     LazyColumn {
         items(count = songList.size,
             itemContent = { item ->
-                AudioListItem(
-                    selectedMonk = selectedMonk,
-                    item = songList[item],
-                    onFavoriteIconClick = onFavoriteIconClick,
-                    onItemClick = onSongClick,
-                )
+                when (val song = songList[item]) {
+                    is Song -> AudioListItem(
+                        selectedMonk = selectedMonk,
+                        item = song,
+                        onFavoriteIconClick = onFavoriteIconClick,
+                        onItemClick = onSongClick,
+                    )
+
+                    is Mp3.SongFolder -> FolderItem(item = song, onFolderClick = onFolderClick)
+                }
                 if (item != songList.size - 1)
                     ListItemDivider()
             })
+    }
+}
+
+@Composable
+fun FolderItem(item: Mp3.SongFolder, onFolderClick: (Mp3.SongFolder) -> Unit) {
+
+    val typography = MaterialTheme.typography
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .testTag("${TestTag.AUDIO_LIST_SCREEN_LIST_ITEM}-${item.id}")
+            .clickable { onFolderClick(item) },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+
+        val imageModifier = Modifier
+            .size(40.dp)
+            .height(40.dp)
+
+        Image(
+            painter = painterResource(id = com.yawki.common.R.drawable.ic_folder),
+            modifier = imageModifier,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+        )
+        Spacer(Modifier.width(8.dp))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = item.name,
+                    style = typography.bodyLarge
+                )
+//                Text(
+//                    text = item.monkName,
+//                    style = typography.bodyMedium
+//                )
+            }
+        }
     }
 }
 
@@ -191,8 +248,8 @@ fun AudioListItem(
     ) {
 
         val imageModifier = Modifier
-            .size(50.dp)
-            .height(50.dp)
+            .size(40.dp)
+            .height(40.dp)
             .clip(shape = CircleShape)
         Image(
             painter = painterResource(if (item.isPlaying) R.drawable.ic_pause else R.drawable.ic_play),
@@ -213,12 +270,16 @@ fun AudioListItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = item.name,
-                    style = typography.titleLarge
+                    style = typography.bodyLarge
                 )
-                Text(
-                    text = selectedMonk.name,
-                    style = typography.bodyMedium
-                )
+//                Text(
+//                    text = item.name,
+//                    style = typography.titleLarge
+//                )
+//                Text(
+//                    text = selectedMonk.name,
+//                    style = typography.bodyMedium
+//                )
             }
             Image(
                 imageVector = if (item.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -234,6 +295,13 @@ fun AudioListItem(
     }
 }
 
+@Preview
+@Composable
+fun FolderItemPreview(
+    item: Mp3.SongFolder = Mp3.SongFolder(id = 1, name = "Folder 1", monkId = 2)
+) {
+    FolderItem(item, onFolderClick = {})
+}
 
 @Preview
 @Composable
@@ -250,5 +318,11 @@ fun ContentPreview(
     monk: Monk = DataProvider.monks.first(),
     item: Song = DataProvider.audioList.first()
 ) {
-    AudioList(monk, DataProvider.audioList, onFavoriteIconClick = {}) {}
+    AudioList(
+        monk,
+        DataProvider.audioList,
+        onFavoriteIconClick = {},
+        onSongClick = {},
+        onFolderClick = {},
+    )
 }

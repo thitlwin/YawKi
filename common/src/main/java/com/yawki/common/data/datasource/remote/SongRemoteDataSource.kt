@@ -21,4 +21,18 @@ class SongRemoteDataSource(private val songCollection: CollectionReference) {
             }
         })
 
+    fun getSongFolderByMonk(monkId: Int): Task<QuerySnapshot> = songCollection
+        .document("$monkId")
+        .collection("mp3_folder")
+        .get()
+        .addOnCompleteListener(OnCompleteListener { task ->
+            if (task.isSuccessful) {
+                for (doc in task.result) {
+                    Log.d(TAG, doc.id + "=>" + doc.data)
+                }
+            } else {
+                Log.w(TAG, "Error getting documents.", task.exception);
+            }
+        })
+
 }

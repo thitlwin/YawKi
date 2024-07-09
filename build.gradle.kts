@@ -5,5 +5,5 @@ plugins {
     id(BuildPlugins.ANDROID_LIBRARY_PLUGIN) version "8.2.2" apply false
     id(BuildPlugins.KOTLIN_JVM) version "1.9.0" apply false
     id(BuildPlugins.DAGGER_HILT_PLUGIN) version Lib.Di.HILT_VERSION apply false
-    id(BuildPlugins.GOOGLE_SERVICE) version "4.4.1" apply false
+    id(BuildPlugins.GOOGLE_SERVICE) version "4.4.2" apply false
 }

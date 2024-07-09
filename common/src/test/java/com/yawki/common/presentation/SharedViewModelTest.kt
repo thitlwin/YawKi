@@ -2,7 +2,7 @@ package com.yawki.common.presentation
 
 
 import com.yawki.common.data.DataProvider
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3.Song
 import com.yawki.common.domain.usecases.GetCurrentSongPositionUseCase
 import com.yawki.common.domain.usecases.PauseSongUseCase
 import com.yawki.common.domain.usecases.PlaySongUseCase

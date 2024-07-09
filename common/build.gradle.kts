@@ -51,6 +51,10 @@ dependencies {
 // Firebase
     implementation(platform(Lib.Firebase.FIREBASE_BOM))
     implementation(Lib.Firebase.CLOUD_FIRESTORE)
+    // For Firebase Authentication
+    implementation(Lib.Firebase.FIREBASE_AUTHENTICATION)
+    // For Google Authentication
+    implementation(Lib.Firebase.GOOGLE_SERVICE_AUTH)
 
 // For DI
     implementation(Lib.Di.hiltAndroid)

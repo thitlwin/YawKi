@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 inline fun <RequestType, ResponseType> networkBoundResource(
     crossinline query: () -> Flow<ResponseType>,
     crossinline fetch: suspend () -> RequestType,
-    crossinline saveFetchResult: suspend (RequestType) -> Unit,
+    crossinline saveFetchedResult: suspend (RequestType) -> Unit,
     crossinline shouldFetch: (ResponseType) -> Boolean = { true },
     crossinline onFetchSuccess: () -> Unit = { },
     crossinline onFetchFailed: (Exception) -> Unit = { }
@@ -19,7 +19,7 @@ inline fun <RequestType, ResponseType> networkBoundResource(
     val flow = if (shouldFetch(data)) {
         emit(SafeResult.Loading)
         try {
-            saveFetchResult(fetch())
+            saveFetchedResult(fetch())
             query().map { SafeResult.Success(it) }
         } catch (exception: Exception) {
             query().map { SafeResult.Error(exception, "Error at api request.") }

@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yawki.common.domain.SafeResult
 import com.yawki.common.domain.models.monk.Monk
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3
 import com.yawki.common.domain.usecases.AddMediaItemsUseCase
 import com.yawki.common.domain.usecases.GetMonkUseCase
 import com.yawki.common.domain.usecases.GetSongsUseCase
@@ -31,21 +31,19 @@ class AudioListVM @Inject constructor(
     private val updateSongUseCase: UpdateSongUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val selectedMonk = savedStateHandle.get<Int>(KEY_ARGS.SELECTED_MONK)
+    private val selectedMonkId = savedStateHandle.get<Int>(KEY_ARGS.SELECTED_MONK)
     private lateinit var monk: Monk
+    var audioListScreenUIState by mutableStateOf(AudioListUIState())
+        private set
     init {
         viewModelScope.launch {
-            selectedMonk?.let { monkId ->
+            selectedMonkId?.let { monkId ->
                 monk = getMonkUseCase.invoke(monkId)
                 Log.d("TAG", "selectedMonk---->$monk")
                 fetchAudios(monk)
             }
         }
-
     }
-
-    var audioListScreenUIState by mutableStateOf(AudioListUIState())
-        private set
 
     private fun fetchAudios(monk: Monk) {
         audioListScreenUIState = audioListScreenUIState.copy(loading = true)
@@ -64,7 +62,6 @@ class AudioListVM @Inject constructor(
                     )
 
                     is SafeResult.Success -> {
-                        addMediaItemsUseCase(it.data, monk)
                         audioListScreenUIState.copy(
                             loading = false,
                             songs = it.data
@@ -80,9 +77,17 @@ class AudioListVM @Inject constructor(
     fun onEvent(event: AudioListUIEvent) {
         when (event) {
             is AudioListUIEvent.FetchSong -> fetchAudios(event.monk)
-            is AudioListUIEvent.OnSongClick -> toggleIconState(event.selectedSong)
+            is AudioListUIEvent.OnSongClick -> onSongClick(event.selectedSong)
             is AudioListUIEvent.OnFavoriteIconClick -> onFavoriteIconClick(event.selectedSong)
             AudioListUIEvent.OnBackPress -> onBackPress()
+            else -> {}
+        }
+    }
+
+    private fun onSongClick(selectedSong: Mp3.Song) {
+        val songs = audioListScreenUIState.songs?.filterIsInstance<Mp3.Song>()
+        if (songs != null) {
+            addMediaItemsUseCase(songs, monk)
         }
     }
 
@@ -90,21 +95,18 @@ class AudioListVM @Inject constructor(
         composeNavigator.navigateUp()
     }
 
-    private fun toggleIconState(selectedSong: Song) {
-        selectedSong.apply {
-            isPlaying = !selectedSong.isPlaying
-        }
-        audioListScreenUIState = audioListScreenUIState.copy(
-            songs = audioListScreenUIState.songs?.map {
-                if (it.id == selectedSong.id)
-                    it.copy(isPlaying = selectedSong.isPlaying)
-                else
-                    it.copy(isPlaying = false)
-            }
-        )
+    private fun toggleIconState(selectedSong: Mp3.Song) {
+//        audioListScreenUIState = audioListScreenUIState.copy(
+//            songs = audioListScreenUIState.songs?.map {
+//                if (it.id == selectedSong.id)
+//                    it.copy(isPlaying = selectedSong.isPlaying)
+//                else
+//                    it.copy(isPlaying = false)
+//            }
+//        )
     }
 
-    private fun onFavoriteIconClick(selectedSong: Song) {
+    private fun onFavoriteIconClick(selectedSong: Mp3.Song) {
         viewModelScope.launch {
             updateSongUseCase.invoke(selectedSong, monk)
         }

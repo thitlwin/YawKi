@@ -1,7 +1,7 @@
 package com.yawki.common.presentation
 
 import com.yawki.common.domain.models.PlayerState
-import com.yawki.common.domain.models.song.Song
+import com.yawki.common.domain.models.song.Mp3.Song
 
 data class PlayerUIState(
     val loading: Boolean = false,

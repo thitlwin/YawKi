@@ -56,6 +56,8 @@ dependencies {
     implementation(Lib.Android.COMPOSE_MATERIAL3)
     implementation(Lib.Android.COMPOSE_NAVIGATION)
 
+    implementation(Lib.Firebase.FIREBASE_AUTHENTICATION)
+
     // For DI
     kapt(Lib.Di.hiltAndroidCompiler)
     implementation(Lib.Di.hiltNavigationCompose)

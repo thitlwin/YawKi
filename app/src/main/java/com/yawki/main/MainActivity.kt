@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     dashboardNavigation(
                         sharedViewModel = sharedViewModel,
+                        composeNavigator = composeNavigator
                     )
                 }
             }

@@ -26,6 +26,7 @@ object Lib {
     object AppCompat {
         private const val APPCOMPAT_VERSION = "1.7.0"
         const val APPCOMPAT_RESOURCES = "androidx.appcompat:appcompat-resources:$APPCOMPAT_VERSION"
+        const val APPCOMPAT = "androidx.appcompat:appcompat:$APPCOMPAT_VERSION"
     }
 
     object UnitTesting {
@@ -56,6 +57,8 @@ object Lib {
         const val FIREBASE_BOM = "com.google.firebase:firebase-bom:33.0.0"
         const val FIREBASE_ANALYTICS = "com.google.firebase:firebase-analytics"
         const val CLOUD_FIRESTORE = "com.google.firebase:firebase-firestore"
+        const val FIREBASE_AUTHENTICATION = "com.google.firebase:firebase-auth"
+        const val GOOGLE_SERVICE_AUTH = "com.google.android.gms:play-services-auth:20.7.0"
     }
 
     object Kotlin {
