@@ -57,7 +57,7 @@ kapt {
     correctErrorTypes = true
 }
 dependencies {
-    api(project(":ui-dashboard"))
+    implementation(project(":ui-dashboard"))
     implementation(project(":navigator"))
     implementation(project(":common"))
     implementation(project(":common_ui"))
